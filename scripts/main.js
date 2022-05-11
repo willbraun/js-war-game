@@ -41,16 +41,13 @@ function valToName(num) {
 Game.prototype.endRound = function(winner,loser,winCard,loseCard,...otherCards) {
     winner.cards.unshift(winCard, loseCard, ...otherCards);
     
-    $display.innerText = `${winner.name} wins. ${winner.name} played ${valToName(winCard.val)}, and ${loser.name} played ${valToName(loseCard.val)}. 
-    ${winner.name} has ${winner.cards.length} cards remaining, ${loser.name} has ${loser.cards.length} cards remaining.`;
+    $display.innerText = `${winner.name} wins. ${winner.name} drew ${valToName(winCard.val)}, and ${loser.name} drew ${valToName(loseCard.val)}. 
+    ${this.player1.name} has ${this.player1.cards.length} cards remaining, ${this.player2.name} has ${this.player2.cards.length} cards remaining.`;
 }
 
-const game = new Game({player1Name: 'Player 1', player2Name: 'Player 2'});
-
-function play() {
-    const result = '';
-    const p1Card = game.player1.playCard();
-    const p2Card = game.player2.playCard();
+Game.prototype.draw = function() {
+    const p1Card = this.player1.playCard();
+    const p2Card = this.player2.playCard();
 
     const others = [];
 
@@ -65,4 +62,6 @@ function play() {
     //// if going to war, show 'facedown' for each of the 3 facedown cards played
 }
 
-$play.addEventListener('click', play);
+const game = new Game({player1Name: 'Player 1', player2Name: 'Player 2'});
+
+$play.addEventListener('click', game.draw);
