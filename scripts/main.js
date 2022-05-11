@@ -30,12 +30,6 @@ Player.prototype.playCard = function() {
     return this.cards.pop()
 }
 
-
-
-// load page
-const game = new Game({player1Name: 'Player 1', player2Name: 'Player 2'});
-
-// play button
 function valToName(num) {
     if (num === 11) return 'Jack';
     else if (num === 12) return 'Queen';
@@ -44,17 +38,14 @@ function valToName(num) {
     else return num;
 }
 
-Game.prototype.endRound = function() {
-    
-}
-
-function endRound(winner,loser,winCard,loseCard,...otherCards) {
+Game.prototype.endRound = function(winner,loser,winCard,loseCard,...otherCards) {
     winner.cards.unshift(winCard, loseCard, ...otherCards);
     
     $display.innerText = `${winner.name} wins. ${winner.name} played ${valToName(winCard.val)}, and ${loser.name} played ${valToName(loseCard.val)}. 
     ${winner.name} has ${winner.cards.length} cards remaining, ${loser.name} has ${loser.cards.length} cards remaining.`;
-
 }
+
+const game = new Game({player1Name: 'Player 1', player2Name: 'Player 2'});
 
 function play() {
     const result = '';
@@ -64,10 +55,10 @@ function play() {
     const others = [];
 
     if (p1Card.val >= p2Card.val) {
-        endRound(game.player1, game.player2, p1Card, p2Card);
+        game.endRound(game.player1, game.player2, p1Card, p2Card);
     }
     else if (p1Card.val < p2Card.val) {
-        endRound(game.player2, game.player1, p2Card, p1Card);
+        game.endRound(game.player2, game.player1, p2Card, p1Card);
     }
 
     // Write war scenario later
