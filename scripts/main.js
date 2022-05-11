@@ -51,7 +51,7 @@ Game.prototype.endRound = function(winner, loser, winCard, loseCard) {
     }
     
     winner.cards.unshift(winCard, loseCard, ...this.cardPot);
-    this.cardPot = [];
+    this.cardPot.splice(0,this.cardPot.length + 2);
     
     $display.innerText = `${winner.name} wins. ${winner.name} drew ${valToName(winCard.val)}, and ${loser.name} drew ${valToName(loseCard.val)}. 
     ${this.player1.name} has ${this.player1.cards.length} cards remaining, ${this.player2.name} has ${this.player2.cards.length} cards remaining.`;
@@ -60,16 +60,17 @@ Game.prototype.endRound = function(winner, loser, winCard, loseCard) {
 Game.prototype.goToWar = function(card1,card2) {
     for (let player of Object.values(this)) {
         if (player instanceof Player && player.cards.length < 4) {
-            this.gameOver(player); 
+            this.gameOver(player);
             return;
         }
     }
     
-    Object.keys(this)
-        .filter(key => key instanceof Player)
+    Object.values(this)
+        .filter(value => value instanceof Player)
         .forEach(key => [0,0,0]
         .forEach(index => this.cardPot.push(this.player1.drawCard(false))));
     this.cardPot.push(card1,card2);
+
     $display.innerText = `War! Both players drew ${valToName(card1.val)}. There are ${this.cardPot.length} cards in the pot.`;
 }
 
