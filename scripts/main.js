@@ -26,16 +26,13 @@ function Game({player1Name, player2Name}) {
     this.player1 = new Player({name: player1Name, cards: gameDeck.slice(0,26)});
     this.player2 = new Player({name: player2Name, cards: gameDeck.slice(26,52)});
     this.cardPot = [];
+    this.active = true;
 }
 
 Player.prototype.drawCard = function(showCard) {
     const drawnCard = this.cards.pop();
     drawnCard.faceUp = showCard;
     return drawnCard;
-}
-
-Player.prototype.checkIfLost = function() {
-    
 }
 
 function valToName(num) {
@@ -48,19 +45,27 @@ function valToName(num) {
 
 Game.prototype.endRound = function(winner, loser, winCard, loseCard) {
     winner.cards.unshift(winCard, loseCard, ...this.cardPot);
+    loser.cards.length === 0 ? this.gameOver(loser) : null;
     this.cardPot = [];
     
     $display.innerText = `${winner.name} wins. ${winner.name} drew ${valToName(winCard.val)}, and ${loser.name} drew ${valToName(loseCard.val)}. 
     ${this.player1.name} has ${this.player1.cards.length} cards remaining, ${this.player2.name} has ${this.player2.cards.length} cards remaining.`;
-
 }
 
 Game.prototype.goToWar = function(card1,card2) {
+    Object.values(this)
+        .filter(value => value instanceof Player)
+        .forEach(player => {
+            if (player.cards.length < 4) {
+                this.gameOver(player); 
+                return;
+            }
+        });
+    
     Object.keys(this)
-        .filter(key => key.includes('player'))
+        .filter(key => key instanceof Player)
         .forEach(key => [0,0,0]
         .forEach(index => this.cardPot.push(this.player1.drawCard(false))));
-    
     this.cardPot.push(card1,card2);
     $display.innerText = `War! Both players drew ${valToName(card1.val)}. There are ${this.cardPot.length} cards in the pot.`;
 }
@@ -69,23 +74,27 @@ Game.prototype.draw = function() {
     const p1Card = this.player1.drawCard(true);
     const p2Card = this.player2.drawCard(true);
 
-    if (p1Card.val > p2Card.val) {
-        this.endRound(this.player1, this.player2, p1Card, p2Card);
-    }
-    else if (p1Card.val < p2Card.val) {
-        this.endRound(this.player2, this.player1, p2Card, p1Card);
-    }
-    else {
-        this.goToWar(p1Card,p2Card);
-    }
+    if (p1Card === undefined) {this.gameOver(this.player1); return};
+    if (p2Card === undefined) {this.gameOver(this.player2); return};
+
+    if (p1Card.val > p2Card.val) this.endRound(this.player1, this.player2, p1Card, p2Card);
+    else if (p1Card.val < p2Card.val) this.endRound(this.player2, this.player1, p2Card, p1Card);
+    else if (p1Card.val === p2Card.val) this.goToWar(p1Card,p2Card);
 }
 
+Game.prototype.gameOver = function(loser) {
+    $display.innerText = `Game over, ${loser.name} has no more cards. ${Object.values(this).find(value => value instanceof Player && value !== loser).name} is the winner!`;
+    console.log($display.innerText);
+    this.active = false;
+}
 
-
-Game.prototype.gameOver = function() {
-
+Game.prototype.playFullGame = function() {
+    while (this.active) {
+        this.draw();
+    }
 }
 
 const game = new Game({player1Name: 'Player 1', player2Name: 'Player 2'});
 
 $draw.addEventListener('click', game.draw.bind(game));
+
