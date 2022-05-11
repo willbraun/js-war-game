@@ -16,9 +16,10 @@ function Deck() {
     this.cards.sort((a, b) => Math.random() - 0.5);
 }
 
-function Player({name, cards}) {
+function Player({name, cards, drew = null}) {
     this.name = name;
     this.cards = cards;
+    this.drew = drew;
 }
 
 function Game({player1Name, player2Name}) {
@@ -44,8 +45,12 @@ function valToName(num) {
 }
 
 Game.prototype.endRound = function(winner, loser, winCard, loseCard) {
+    if (loser.cards.length === 0) {
+        this.gameOver(loser);
+        return;
+    }
+    
     winner.cards.unshift(winCard, loseCard, ...this.cardPot);
-    loser.cards.length === 0 ? this.gameOver(loser) : null;
     this.cardPot = [];
     
     $display.innerText = `${winner.name} wins. ${winner.name} drew ${valToName(winCard.val)}, and ${loser.name} drew ${valToName(loseCard.val)}. 
@@ -53,14 +58,12 @@ Game.prototype.endRound = function(winner, loser, winCard, loseCard) {
 }
 
 Game.prototype.goToWar = function(card1,card2) {
-    Object.values(this)
-        .filter(value => value instanceof Player)
-        .forEach(player => {
-            if (player.cards.length < 4) {
-                this.gameOver(player); 
-                return;
-            }
-        });
+    for (let player of Object.values(this)) {
+        if (player instanceof Player && player.cards.length < 4) {
+            this.gameOver(player); 
+            return;
+        }
+    }
     
     Object.keys(this)
         .filter(key => key instanceof Player)
@@ -71,15 +74,22 @@ Game.prototype.goToWar = function(card1,card2) {
 }
 
 Game.prototype.draw = function() {
-    const p1Card = this.player1.drawCard(true);
-    const p2Card = this.player2.drawCard(true);
+    for (let player of Object.values(this)) {
+        if (player instanceof Player) {
+            player.drew = player.drawCard(true);
+            if (player.drew === undefined) {
+                this.gameOver(player); 
+                return;
+            };
+        }
+    }
 
-    if (p1Card === undefined) {this.gameOver(this.player1); return};
-    if (p2Card === undefined) {this.gameOver(this.player2); return};
+    const p1 = this.player1;
+    const p2 = this.player2;
 
-    if (p1Card.val > p2Card.val) this.endRound(this.player1, this.player2, p1Card, p2Card);
-    else if (p1Card.val < p2Card.val) this.endRound(this.player2, this.player1, p2Card, p1Card);
-    else if (p1Card.val === p2Card.val) this.goToWar(p1Card,p2Card);
+    if (p1.drew.val > p2.drew.val) this.endRound(p1, p2, p1.drew, p2.drew);
+    else if (p1.drew.val < p2.drew.val) this.endRound(p2, p1, p2.drew, p1.drew);
+    else if (p1.drew.val === p2.drew.val) this.goToWar(p1.drew,p2.drew);
 }
 
 Game.prototype.gameOver = function(loser) {
@@ -97,4 +107,3 @@ Game.prototype.playFullGame = function() {
 const game = new Game({player1Name: 'Player 1', player2Name: 'Player 2'});
 
 $draw.addEventListener('click', game.draw.bind(game));
-
