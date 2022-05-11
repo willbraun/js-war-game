@@ -1,8 +1,9 @@
 const $draw = document.querySelector('.draw');
 const $display = document.querySelector('.display');
 
-function Card({val, name}) { 
+function Card({val,faceUp = false}) { 
     this.val = val;
+    this.faceUp = faceUp;
 }
 
 function Deck() {
@@ -27,8 +28,10 @@ function Game({player1Name, player2Name}) {
     this.cardPot = [];
 }
 
-Player.prototype.drawCard = function() {
-    return this.cards.pop()
+Player.prototype.drawCard = function(showCard) {
+    const drawnCard = this.cards.pop();
+    drawnCard.faceUp = showCard;
+    return drawnCard;
 }
 
 function valToName(num) {
@@ -40,15 +43,27 @@ function valToName(num) {
 }
 
 Game.prototype.endRound = function(winner, loser, winCard, loseCard) {
-    winner.cards.unshift(winCard, loseCard, otherCardArray);
+    winner.cards.unshift(winCard, loseCard, ...this.cardPot);
+    this.cardPot = [];
     
     $display.innerText = `${winner.name} wins. ${winner.name} drew ${valToName(winCard.val)}, and ${loser.name} drew ${valToName(loseCard.val)}. 
     ${this.player1.name} has ${this.player1.cards.length} cards remaining, ${this.player2.name} has ${this.player2.cards.length} cards remaining.`;
+
+}
+
+Game.prototype.goToWar = function(card1,card2) {
+    Object.keys(this)
+        .filter(key => key.includes('player'))
+        .forEach(key => [0,0,0]
+        .forEach(index => this.cardPot.push(this.player1.drawCard(false))));
+    
+    this.cardPot.push(card1,card2);
+    console.log(this.cardPot);
 }
 
 Game.prototype.draw = function() {
-    const p1Card = this.player1.drawCard();
-    const p2Card = this.player2.drawCard();
+    const p1Card = this.player1.drawCard(true);
+    const p2Card = this.player2.drawCard(true);
 
     if (p1Card.val > p2Card.val) {
         this.endRound(this.player1, this.player2, p1Card, p2Card);
@@ -57,16 +72,9 @@ Game.prototype.draw = function() {
         this.endRound(this.player2, this.player1, p2Card, p1Card);
     }
     else {
-
-        Object.keys(this).forEach(key => [0,0,0].forEach(index => pastCards.push(this.player1.drawCard())));
-        pastCards.push(p1Card,p2Card);
-
+        this.goToWar(p1Card,p2Card);
     }
-
-    // Write war scenario later
-    //// if going to war, show 'facedown' for each of the 3 facedown cards played
 }
-
 
 const game = new Game({player1Name: 'Player 1', player2Name: 'Player 2'});
 
