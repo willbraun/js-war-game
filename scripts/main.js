@@ -34,6 +34,10 @@ Player.prototype.drawCard = function(showCard) {
     return drawnCard;
 }
 
+Player.prototype.checkIfLost = function() {
+    
+}
+
 function valToName(num) {
     if (num === 11) return 'Jack';
     else if (num === 12) return 'Queen';
@@ -58,7 +62,7 @@ Game.prototype.goToWar = function(card1,card2) {
         .forEach(index => this.cardPot.push(this.player1.drawCard(false))));
     
     this.cardPot.push(card1,card2);
-    console.log(this.cardPot);
+    $display.innerText = `War! Both players drew ${valToName(card1.val)}. There are ${this.cardPot.length} cards in the pot.`;
 }
 
 Game.prototype.draw = function() {
@@ -74,6 +78,12 @@ Game.prototype.draw = function() {
     else {
         this.goToWar(p1Card,p2Card);
     }
+}
+
+
+
+Game.prototype.gameOver = function() {
+
 }
 
 const game = new Game({player1Name: 'Player 1', player2Name: 'Player 2'});
