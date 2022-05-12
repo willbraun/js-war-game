@@ -34,6 +34,16 @@ function Game({player1Name, player2Name}) {
     this.player2 = new Player({name: player2Name, cards: gameDeck.slice(26,52)});
     this.cardPot = [];
     this.active = true;
+
+    // for both players, go through each card in the deck and create a div of the card with class 'facedown'
+    
+    
+    // Add to CSS that facedown class means to fill the div with an image of the back of a card
+    // Find way to offset each card by a tiny bit in CSS within the card-container
+}
+
+Game.prototype.getPlayers = function() {
+    return Object.values(this).filter(player => player instanceof Player);
 }
 
 Player.prototype.drawCard = function(showCard) {
@@ -64,30 +74,26 @@ Game.prototype.endRound = function(winner, loser, winCard, loseCard) {
 }
 
 Game.prototype.goToWar = function(card1,card2) {
-    for (let player of Object.values(this)) {
-        if (player instanceof Player && player.cards.length < 4) {
+    for (let player of this.getPlayers()) {
+        if (player.cards.length < 4) {
             this.gameOver(player);
             return;
         }
     }
     
-    Object.values(this)
-        .filter(value => value instanceof Player)
-        .forEach(player => Array(3).fill().forEach(() => this.cardPot.push(player.drawCard(false))));
+    this.getPlayers().forEach(player => Array(3).fill().forEach(() => this.cardPot.push(player.drawCard(false))));
     this.cardPot.push(card1,card2);
 
     $display.innerText = `War! Both players drew ${valToName(card1.val)}. There are ${this.cardPot.length} cards in the pot.`;
 }
 
 Game.prototype.draw = function() {
-    for (let player of Object.values(this)) {
-        if (player instanceof Player) {
-            player.drew = player.drawCard(true);
-            if (player.drew === undefined) {
-                this.gameOver(player); 
-                return;
-            };
-        }
+    for (let player of this.getPlayers()) {
+        player.drew = player.drawCard(true);
+        if (player.drew === undefined) {
+            this.gameOver(player); 
+            return;
+        };
     }
 
     const p1 = this.player1;
@@ -99,7 +105,7 @@ Game.prototype.draw = function() {
 }
 
 Game.prototype.gameOver = function(loser) {
-    $display.innerText = `Game over, ${loser.name} has no more cards. ${Object.values(this).find(value => value instanceof Player && value !== loser).name} is the winner!`;
+    $display.innerText = `Game over, ${loser.name} has no more cards. ${this.getPlayers().find(player => player !== loser).name} is the winner!`;
     this.active = false;
 }
 

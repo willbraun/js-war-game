@@ -1,17 +1,30 @@
 .game-container {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
-    grid-template-rows: 0.3fr 1fr 1fr 0.3fr;
+    grid-template-rows: 0.1fr 1fr 0.1fr;
     grid-template-areas: 
         ". display display display ."
-        "player1 p1Card . p2Card player2"
-        "p1Deck . cardPot . p2Deck"
-        ". draw draw draw playFullGame";
+        "player1 game-table game-table game-table player2"
+        ". . draw . playFullGame";
     margin: auto;
     height: 90vh;
-    max-width: 1000px;
+    max-width: 1500px;
     row-gap: 5%;
     column-gap: 3%;
+}
+
+.game-table {
+    display: grid;
+    grid-template-rows: 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    grid-template-areas:         
+        ". p1Card . p2Card ."
+        "p1Deck . cardPot . p2Deck";
+    row-gap: 20px;
+    column-gap: 20px;
+    grid-area: game-table;
+    background-color: rgb(185, 81, 81);
+    padding: 20px;
 }
 
 .display {
@@ -21,12 +34,10 @@
 
 .player1 {
     grid-area: player1;
-    border: 1px solid;
 }
 
 .player2 {
     grid-area: player2;
-    border: 1px solid;
 }
 
 .p1Card {
@@ -62,3 +73,9 @@
     grid-area: playFullGame;
 }
 
+.player1, .player2 {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    justify-content: center;
+}
