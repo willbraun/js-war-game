@@ -27,28 +27,31 @@ function Deck() {
     this.cards.sort(() => Math.random() - 0.5);
 }
 
-function Player({name, cards, drew = null}) {
+function Player({name, cards, cardLocation, deckLocation}) {
     this.name = name;
     this.cards = cards;
-    this.drew = drew;
+    this.cardLocation = cardLocation;
+    this.deckLocation = deckLocation;
+    this.drew = null;
 }
 
 function Game({player1Name, player2Name}) {
     const gameDeck = new Deck().cards;
 
-    this.player1 = new Player({name: player1Name, cards: gameDeck.slice(0,26)});
-    this.player2 = new Player({name: player2Name, cards: gameDeck.slice(26,52)});
+    this.player1 = new Player({name: player1Name, cards: gameDeck.slice(0,26), cardLocation: $p1Card, deckLocation: $p1Deck});
+    this.player2 = new Player({name: player2Name, cards: gameDeck.slice(26,52), cardLocation: $p2Card, deckLocation: $p2Deck});
     this.cardPot = [];
     this.active = true;
+
 }
 
 Game.prototype.displayCards = function() {
-    // for both players, go through each card in the deck and create a div of the card with class 'facedown'
-    let p1DeckHTML = this.player1.cards.map((card,i) => {
-        return `<img src="http://clipart-library.com/images/8cEbeEMLi.png" class="card facedown" style="z-index: ${i}; bottom: ${i * 3}px">`;
-    }).join('');
-
-    $p1Deck.innerHTML = p1DeckHTML;
+    this.getPlayers().forEach(player => {
+        let deckHTML = player.cards.map((card,i) => {
+            return `<img src="http://clipart-library.com/images/8cEbeEMLi.png" class="card facedown" style="z-index: ${i}; bottom: ${i * 3}px">`;
+        }).join('');
+        player.deckLocation.innerHTML = deckHTML;
+    });
 
     // Add to CSS that facedown class means to fill the div with an image of the back of a card
     // Find way to offset each card by a tiny bit in CSS within the card-container
@@ -128,8 +131,7 @@ Game.prototype.playFullGame = function() {
  } 
 
 const game = new Game({player1Name: 'Player 1', player2Name: 'Player 2'});
-game.displayCards.bind(game);
-game.displayCards();
+game.displayCards.call(game);
 
 $draw.addEventListener('click', game.draw.bind(game));
 $playFull.addEventListener('click', game.playFullGame.bind(game));
