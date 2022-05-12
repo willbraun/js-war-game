@@ -55,16 +55,12 @@ Game.prototype.displayCards = function() {
             return `<img src="images/back.png" class="card" style="z-index: ${i}; bottom: ${i * 3}px">`;
         }).join('');
         player.deckLocation.innerHTML = deckHTML;
-        // deck is just a visual counter for number of cards each player has
-        // doesn't correspond to actual cards
     });
 };
 
 Player.prototype.drawCard = function(showCard) {
     const drawnCard = this.cards.pop();
     this.cardLocation.innerHTML = `<img src="${drawnCard.frontPath}" class="card">`;
-
-    // player.cards is the source of truth, should take associated card from HTML and move to card area
     
 
     drawnCard.faceUp = showCard;
