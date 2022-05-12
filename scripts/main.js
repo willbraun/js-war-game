@@ -54,7 +54,7 @@ Game.prototype.endRound = function(winner, loser, winCard, loseCard) {
     winner.cards.unshift(winCard, loseCard, ...this.cardPot);
     this.cardPot = [];
     
-    $display.innerText = `${winner.name} wins. ${winner.name} drew ${valToName(winCard.val)}, and ${loser.name} drew ${valToName(loseCard.val)}. 
+    $display.innerText = `${winner.name} wins this round. ${winner.name} drew ${valToName(winCard.val)}, and ${loser.name} drew ${valToName(loseCard.val)}. 
     ${this.player1.name} has ${this.player1.cards.length} cards remaining, ${this.player2.name} has ${this.player2.cards.length} cards remaining.`;
 }
 
