@@ -11,10 +11,10 @@ const $p1Deck = document.querySelector('.p1Deck');
 const $p2Deck = document.querySelector('.p2Deck');
 const $cardPot = document.querySelector('.cardPot');
 
-function Card({val, suit, front, faceUp = false}) { 
+function Card({val, suit, frontPath, faceUp = false}) { 
     this.val = val;
     this.suit = suit;
-    this.front = front;
+    this.frontPath = frontPath;
     this.faceUp = faceUp;
 }
 
@@ -26,10 +26,9 @@ function Deck() {
 
     suits.forEach(suit => numbers
         .forEach(num => this.cards
-        .push(new Card({val: num, suit: suit, front: `${valToName(num).toString().toLowerCase()}_of_${suit}.png`}))));
+        .push(new Card({val: num, suit: suit, frontPath: `images/${valToName(num).toString().toLowerCase()}_of_${suit}.png`}))));
     
     this.cards.sort(() => Math.random() - 0.5);
-    console.log(this.cards);
 }
 
 function Player({name, cards, cardLocation, deckLocation}) {
@@ -53,17 +52,20 @@ function Game({player1Name, player2Name}) {
 Game.prototype.displayCards = function() {
     this.getPlayers().forEach(player => {
         let deckHTML = player.cards.map((card,i) => {
-            return `<img src="images/back.png" class="card facedown" style="z-index: ${i}; bottom: ${i * 3}px">`;
+            return `<img src="images/back.png" class="card" style="z-index: ${i}; bottom: ${i * 3}px">`;
         }).join('');
         player.deckLocation.innerHTML = deckHTML;
+        // deck is just a visual counter for number of cards each player has
+        // doesn't correspond to actual cards
     });
 };
 
 Player.prototype.drawCard = function(showCard) {
     const drawnCard = this.cards.pop();
-    // move card from top of each deck to this players card area
+    this.cardLocation.innerHTML = `<img src="${drawnCard.frontPath}" class="card">`;
+
     // player.cards is the source of truth, should take associated card from HTML and move to card area
-    //// this should match the last card in querySelectorAll of their deck
+    
 
     drawnCard.faceUp = showCard;
     return drawnCard;
