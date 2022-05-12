@@ -44,10 +44,11 @@ function Game({player1Name, player2Name}) {
 
 Game.prototype.displayCards = function() {
     // for both players, go through each card in the deck and create a div of the card with class 'facedown'
+    let p1DeckHTML = this.player1.cards.map((card,i) => {
+        return `<img src="http://clipart-library.com/images/8cEbeEMLi.png" class="card facedown" style="z-index: ${i}; bottom: ${i * 3}px">`;
+    }).join('');
 
-    
-    const deckHTML = 'banana';
-    $p1Deck.innerHTML = deckHTML;
+    $p1Deck.innerHTML = p1DeckHTML;
 
     // Add to CSS that facedown class means to fill the div with an image of the back of a card
     // Find way to offset each card by a tiny bit in CSS within the card-container
@@ -127,6 +128,8 @@ Game.prototype.playFullGame = function() {
  } 
 
 const game = new Game({player1Name: 'Player 1', player2Name: 'Player 2'});
+game.displayCards.bind(game);
+game.displayCards();
 
 $draw.addEventListener('click', game.draw.bind(game));
 $playFull.addEventListener('click', game.playFullGame.bind(game));

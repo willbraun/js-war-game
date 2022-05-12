@@ -23,7 +23,7 @@
     row-gap: 20px;
     column-gap: 20px;
     grid-area: game-table;
-    background-color: rgb(185, 81, 81);
+    background-color: rgb(130, 189, 134);
     padding: 20px;
 }
 
@@ -78,4 +78,16 @@
     flex-direction: column;
     text-align: center;
     justify-content: center;
+}
+
+.card-container {
+    position: relative;
+}
+
+.card-container > *{
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    border: 1px solid black;
+    border-radius: 6%;
 }
