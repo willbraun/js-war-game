@@ -11,11 +11,11 @@ const $p1Deck = document.querySelector('.p1Deck');
 const $p2Deck = document.querySelector('.p2Deck');
 const $cardPot = document.querySelector('.cardPot');
 
-function Card({val, suit, faceUp = false, front = ''}) { 
+function Card({val, suit, front, faceUp = false}) { 
     this.val = val;
     this.suit = suit;
-    this.faceUp = faceUp;
     this.front = front;
+    this.faceUp = faceUp;
 }
 
 function Deck() {
@@ -24,8 +24,12 @@ function Deck() {
     const numbers = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
     const suits = ['clubs','diamonds','hearts','spades'];
 
-    suits.forEach(suit => numbers.forEach(num => this.cards.push(new Card({val: num, suit: suit}))));
+    suits.forEach(suit => numbers
+        .forEach(num => this.cards
+        .push(new Card({val: num, suit: suit, front: `${valToName(num).toString().toLowerCase()}_of_${suit}.png`}))));
+    
     this.cards.sort(() => Math.random() - 0.5);
+    console.log(this.cards);
 }
 
 function Player({name, cards, cardLocation, deckLocation}) {
