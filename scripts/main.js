@@ -4,6 +4,7 @@
 
 const $draw = document.querySelector('.draw');
 const $display = document.querySelector('.display');
+const $playFull = document.querySelector('.playFullGame');
 
 function Card({val,faceUp = false}) { 
     this.val = val;
@@ -32,6 +33,7 @@ function Game({player1Name, player2Name}) {
     this.player1 = new Player({name: player1Name, cards: gameDeck.slice(0,26)});
     this.player2 = new Player({name: player2Name, cards: gameDeck.slice(26,52)});
     this.cardPot = [];
+    this.active = true;
 }
 
 Player.prototype.drawCard = function(showCard) {
@@ -98,10 +100,18 @@ Game.prototype.draw = function() {
 
 Game.prototype.gameOver = function(loser) {
     $display.innerText = `Game over, ${loser.name} has no more cards. ${Object.values(this).find(value => value instanceof Player && value !== loser).name} is the winner!`;
+    this.active = false;
 }
+
+Game.prototype.playFullGame = function() {
+    while (this.active) {
+        this.draw();
+    }
+ } 
 
 const game = new Game({player1Name: 'Player 1', player2Name: 'Player 2'});
 
 $draw.addEventListener('click', game.draw.bind(game));
+$playFull.addEventListener('click', game.playFullGame.bind(game));
 
 })();
