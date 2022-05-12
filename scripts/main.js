@@ -10,7 +10,7 @@ function Deck() {
     this.cards = [];
 
     const numbers = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
-    const suits = [0, 0, 0, 0];
+    const suits = Array(4).fill();
 
     suits.forEach(() => numbers.forEach(num => this.cards.push(new Card({val: num}))));
     this.cards.sort(() => Math.random() - 0.5);
@@ -24,7 +24,7 @@ function Player({name, cards, drew = null}) {
 
 function Game({player1Name, player2Name}) {
     const gameDeck = new Deck().cards;
-    
+
     this.player1 = new Player({name: player1Name, cards: gameDeck.slice(0,26)});
     this.player2 = new Player({name: player2Name, cards: gameDeck.slice(26,52)});
     this.cardPot = [];
@@ -68,7 +68,7 @@ Game.prototype.goToWar = function(card1,card2) {
     
     Object.values(this)
         .filter(value => value instanceof Player)
-        .forEach(player => [0, 0, 0].forEach(() => this.cardPot.push(player.drawCard(false))));
+        .forEach(player => Array(3).fill().forEach(() => this.cardPot.push(player.drawCard(false))));
     this.cardPot.push(card1,card2);
 
     $display.innerText = `War! Both players drew ${valToName(card1.val)}. There are ${this.cardPot.length} cards in the pot.`;
