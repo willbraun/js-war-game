@@ -10,10 +10,10 @@ function Deck() {
     this.cards = [];
 
     const numbers = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
-    const suits = [0, 1, 2, 3];
+    const suits = [0, 0, 0, 0];
 
-    suits.forEach(suit => numbers.forEach(num => this.cards.push(new Card({val: num}))));
-    this.cards.sort((a, b) => Math.random() - 0.5);
+    suits.forEach(() => numbers.forEach(num => this.cards.push(new Card({val: num}))));
+    this.cards.sort(() => Math.random() - 0.5);
 }
 
 function Player({name, cards, drew = null}) {
@@ -24,6 +24,7 @@ function Player({name, cards, drew = null}) {
 
 function Game({player1Name, player2Name}) {
     const gameDeck = new Deck().cards;
+    
     this.player1 = new Player({name: player1Name, cards: gameDeck.slice(0,26)});
     this.player2 = new Player({name: player2Name, cards: gameDeck.slice(26,52)});
     this.cardPot = [];
@@ -51,7 +52,7 @@ Game.prototype.endRound = function(winner, loser, winCard, loseCard) {
     }
     
     winner.cards.unshift(winCard, loseCard, ...this.cardPot);
-    this.cardPot.splice(0,this.cardPot.length + 2);
+    this.cardPot = [];
     
     $display.innerText = `${winner.name} wins. ${winner.name} drew ${valToName(winCard.val)}, and ${loser.name} drew ${valToName(loseCard.val)}. 
     ${this.player1.name} has ${this.player1.cards.length} cards remaining, ${this.player2.name} has ${this.player2.cards.length} cards remaining.`;
@@ -67,8 +68,7 @@ Game.prototype.goToWar = function(card1,card2) {
     
     Object.values(this)
         .filter(value => value instanceof Player)
-        .forEach(key => [0,0,0]
-        .forEach(index => this.cardPot.push(this.player1.drawCard(false))));
+        .forEach(player => [0, 0, 0].forEach(() => this.cardPot.push(player.drawCard(false))));
     this.cardPot.push(card1,card2);
 
     $display.innerText = `War! Both players drew ${valToName(card1.val)}. There are ${this.cardPot.length} cards in the pot.`;
