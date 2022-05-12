@@ -11,19 +11,20 @@ const $p1Deck = document.querySelector('.p1Deck');
 const $p2Deck = document.querySelector('.p2Deck');
 const $cardPot = document.querySelector('.cardPot');
 
-
-function Card({val,faceUp = false}) { 
+function Card({val, suit, faceUp = false, front = ''}) { 
     this.val = val;
+    this.suit = suit;
     this.faceUp = faceUp;
+    this.front = front;
 }
 
 function Deck() {
     this.cards = [];
 
     const numbers = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
-    const suits = Array(4).fill();
+    const suits = ['clubs','diamonds','hearts','spades'];
 
-    suits.forEach(() => numbers.forEach(num => this.cards.push(new Card({val: num}))));
+    suits.forEach(suit => numbers.forEach(num => this.cards.push(new Card({val: num, suit: suit}))));
     this.cards.sort(() => Math.random() - 0.5);
 }
 
@@ -48,17 +49,18 @@ function Game({player1Name, player2Name}) {
 Game.prototype.displayCards = function() {
     this.getPlayers().forEach(player => {
         let deckHTML = player.cards.map((card,i) => {
-            return `<img src="http://clipart-library.com/images/8cEbeEMLi.png" class="card facedown" style="z-index: ${i}; bottom: ${i * 3}px">`;
+            return `<img src="images/back.png" class="card facedown" style="z-index: ${i}; bottom: ${i * 3}px">`;
         }).join('');
         player.deckLocation.innerHTML = deckHTML;
     });
-
-    // Add to CSS that facedown class means to fill the div with an image of the back of a card
-    // Find way to offset each card by a tiny bit in CSS within the card-container
 };
 
 Player.prototype.drawCard = function(showCard) {
     const drawnCard = this.cards.pop();
+    // move card from top of each deck to this players card area
+    // player.cards is the source of truth, should take associated card from HTML and move to card area
+    //// this should match the last card in querySelectorAll of their deck
+
     drawnCard.faceUp = showCard;
     return drawnCard;
 }
@@ -103,6 +105,7 @@ Game.prototype.goToWar = function(card1,card2) {
 }
 
 Game.prototype.draw = function() {
+    
     for (let player of this.getPlayers()) {
         player.drew = player.drawCard(true);
         if (player.drew === undefined) {
