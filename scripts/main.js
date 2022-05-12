@@ -5,6 +5,12 @@
 const $draw = document.querySelector('.draw');
 const $display = document.querySelector('.display');
 const $playFull = document.querySelector('.playFullGame');
+const $p1Card = document.querySelector('.p1Card');
+const $p2Card = document.querySelector('.p2Card');
+const $p1Deck = document.querySelector('.p1Deck');
+const $p2Deck = document.querySelector('.p2Deck');
+const $cardPot = document.querySelector('.cardPot');
+
 
 function Card({val,faceUp = false}) { 
     this.val = val;
@@ -34,17 +40,18 @@ function Game({player1Name, player2Name}) {
     this.player2 = new Player({name: player2Name, cards: gameDeck.slice(26,52)});
     this.cardPot = [];
     this.active = true;
+}
 
+Game.prototype.displayCards = function() {
     // for both players, go through each card in the deck and create a div of the card with class 'facedown'
+
     
-    
+    const deckHTML = 'banana';
+    $p1Deck.innerHTML = deckHTML;
+
     // Add to CSS that facedown class means to fill the div with an image of the back of a card
     // Find way to offset each card by a tiny bit in CSS within the card-container
-}
-
-Game.prototype.getPlayers = function() {
-    return Object.values(this).filter(player => player instanceof Player);
-}
+};
 
 Player.prototype.drawCard = function(showCard) {
     const drawnCard = this.cards.pop();
@@ -58,6 +65,10 @@ function valToName(num) {
     else if (num === 13) return 'King';
     else if (num === 14) return 'Ace';
     else return num;
+}
+
+Game.prototype.getPlayers = function() {
+    return Object.values(this).filter(player => player instanceof Player);
 }
 
 Game.prototype.endRound = function(winner, loser, winCard, loseCard) {
