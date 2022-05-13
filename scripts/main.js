@@ -24,21 +24,18 @@ function Card({val, suit, faceUp = false}) {
     //         <img src="images/back.png" alt="back of card">
     //     </div>
     // </div>`;
-    this.element = null;
+    this.domElement = null;
     this.faceUp = faceUp;
 }
 
 function Deck() {
     this.cards = [];
-
     const numbers = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
     const suits = ['clubs','diamonds','hearts','spades'];
 
     suits.forEach(suit => numbers
         .forEach(num => this.cards
         .push(new Card({val: num, suit: suit}))));
-    
-    this.cards.sort(() => Math.random() - 0.5);
 }
 
 function Player({name, cards, cardLocation, deckLocation}) {
@@ -50,12 +47,17 @@ function Player({name, cards, cardLocation, deckLocation}) {
 }
 
 function Game({player1Name, player2Name}) {
-    const gameDeck = new Deck().cards;
+    const gameDeck = new Deck();
+    gameDeck.shuffle();
 
-    this.player1 = new Player({name: player1Name, cards: gameDeck.slice(0,26), cardLocation: $p1Card, deckLocation: $p1Deck});
-    this.player2 = new Player({name: player2Name, cards: gameDeck.slice(26,52), cardLocation: $p2Card, deckLocation: $p2Deck});
+    this.player1 = new Player({name: player1Name, cards: gameDeck.cards.slice(0,26), cardLocation: $p1Card, deckLocation: $p1Deck});
+    this.player2 = new Player({name: player2Name, cards: gameDeck.cards.slice(26,52), cardLocation: $p2Card, deckLocation: $p2Deck});
     this.cardPot = [];
     this.active = true;
+}
+
+Deck.prototype.shuffle = function() {
+    this.cards.sort(() => Math.random() - 0.5);
 }
 
 Game.prototype.displayCards = function() {
@@ -71,6 +73,8 @@ Game.prototype.displayCards = function() {
     // update the z-index and bottom px styles on card class div based on index in forEach, see below
 
     // reference clone from that card's element property. card.element = clone;
+    const testCard = new Card({val: 2, suit: 'spades'});
+    testCard.domElement = clone1;
 
     // append clone to that player's deckLocation
     this.player1.deckLocation.appendChild(clone1);
@@ -105,12 +109,30 @@ Game.prototype.displayCards = function() {
 
 };
 
+const getElementX = function(element) {
+    return element.getBoundingClientRect().left;
+}
 
+const getElementY = function(element) {
+    return element.getBoundingClientRect().top;
+}
+
+const moveElement = function(elementToMove, endPositionElement) {
+    elementToMove.style.setProperty('--x-distance',`${getElementX(endPositionElement) - getElementX(elementToMove)}px`);
+    elementToMove.style.setProperty('--y-distance',`${getElementY(endPositionElement) - getElementY(elementToMove)}px`);
+
+    console.log(elementToMove);
+}
 
 Player.prototype.drawCard = function(showCard) {
     const drawnCard = this.cards.pop();
-    //this.cardLocation.innerHTML = `<img src="${drawnCard.frontPath}" class="card">`;
-    if (showCard) this.deckLocation.querySelector('.card').classList.add('faceUp');
+    if (showCard) {
+        const testCard = this.deckLocation.querySelector('.card');
+        testCard.classList.add('face-up');
+        moveElement(testCard,this.cardLocation);
+        testCard.classList.add('move');
+    }
+    // drawnCard.domElement
 
     drawnCard.faceUp = showCard;
     return drawnCard;
@@ -156,7 +178,6 @@ Game.prototype.goToWar = function(card1,card2) {
 }
 
 Game.prototype.draw = function() {
-    
     for (let player of this.getPlayers()) {
         player.drew = player.drawCard(true);
         if (player.drew === undefined) {
@@ -182,7 +203,7 @@ Game.prototype.playFullGame = function() {
     while (this.active) {
         this.draw();
     }
- } 
+} 
 
 const game = new Game({player1Name: 'Player 1', player2Name: 'Player 2'});
 game.displayCards.call(game);
