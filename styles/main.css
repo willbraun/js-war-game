@@ -1,7 +1,3 @@
-:root {
-
-}
-
 .game-container {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
@@ -98,7 +94,6 @@
     transform-style: preserve-3d;
     --x-distance: 0;
     --y-distance: 0;
-    
 }
 
 .card-inner {
@@ -134,9 +129,5 @@ img {
 }
 
 .move {
-    /*transform: translate(var(--end-x) - var(--start-x), var(--end-y) - var(--start-y));*/
     transform: translate(var(--x-distance), var(--y-distance));
-    x: 0;
-    y: 0;
 }
-

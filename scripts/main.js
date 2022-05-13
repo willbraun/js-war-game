@@ -15,15 +15,6 @@ const $cardTemplate = document.querySelector('.card-template');
 function Card({val, suit}) { 
     this.val = val;
     this.suit = suit;
-    // this.html = `
-    // <div class="card">
-    //     <div class="front">
-    //         <img src="images/${valToName(val).toString().toLowerCase()}_of_${suit}.png" alt="${val} of ${suit}">
-    //     </div>
-    //     <div class="back">
-    //         <img src="images/back.png" alt="back of card">
-    //     </div>
-    // </div>`;
     this.domElement = null;
 }
 
@@ -42,6 +33,7 @@ function Player({name, cards, cardLocation, deckLocation}) {
     this.cards = cards;
     this.cardLocation = cardLocation;
     this.deckLocation = deckLocation;
+    this.burnLocation = $cardPot;
     this.drew = null;
 }
 
@@ -57,6 +49,14 @@ function Game({player1Name, player2Name}) {
 
 Deck.prototype.shuffle = function() {
     this.cards.sort(() => Math.random() - 0.5);
+}
+
+function valToName(num) {
+    if (num === 11) return 'Jack';
+    else if (num === 12) return 'Queen';
+    else if (num === 13) return 'King';
+    else if (num === 14) return 'Ace';
+    else return num;
 }
 
 const cloneTemplate = function(template) {
@@ -78,19 +78,9 @@ const stackCards = function(cardContainer) {
     let cards = cardContainer.querySelectorAll('.card');
 
     cards.forEach((card,i) => {
-        console.log(i);
         card.style.zIndex = `${i}`;
-        card.style.bottom = `${i + 3}px`;
+        card.style.bottom = `${i * 3}px`;
 })};
-
-Game.prototype.startGame = function() {
-    this.getPlayers().forEach(player => {
-        player.cards.forEach(card => {
-            createCardDOMElement(card);
-            card.moveTo(player.deckLocation);
-        });
-    });
-};
 
 const getElementX = function(element) {
     return element.getBoundingClientRect().left;
@@ -121,8 +111,16 @@ Card.prototype.moveTo = function(destinationCardContainer) {
         stackCards(destinationCardContainer);
         this.domElement.classList.remove('move');
     }, 600);
-    
 }
+
+Game.prototype.startGame = function() {
+    this.getPlayers().forEach(player => {
+        player.cards.forEach(card => {
+            createCardDOMElement(card);
+            card.moveTo(player.deckLocation);
+        });
+    });
+};
 
 Card.prototype.flipUp = function() {
     this.domElement.classList.add('face-up');
@@ -132,6 +130,10 @@ Card.prototype.flipDown = function() {
     this.domElement.classList.remove('face-up');
 }
 
+Game.prototype.getPlayers = function() {
+    return Object.values(this).filter(player => player instanceof Player);
+}
+
 Player.prototype.drawCard = function(showCard) {
     const drawnCard = this.cards.pop();
 
@@ -139,20 +141,40 @@ Player.prototype.drawCard = function(showCard) {
         drawnCard.moveTo(this.cardLocation);
         drawnCard.flipUp();
     }
+    else {
+        // move to cardpot, may need to make this a Game method
+        // if so, update draw and goToWar functions
+    }
 
     return drawnCard;
 }
 
-function valToName(num) {
-    if (num === 11) return 'Jack';
-    else if (num === 12) return 'Queen';
-    else if (num === 13) return 'King';
-    else if (num === 14) return 'Ace';
-    else return num;
+Player.prototype.playCard = function() {
+    const playedCard = this.drawCard();
+    playedCard.moveTo(this.cardLocation);
+    playedCard.flipUp();
 }
 
-Game.prototype.getPlayers = function() {
-    return Object.values(this).filter(player => player instanceof Player);
+Player.prototype.burnCard = function() {
+    const burnedCard = this.drawCard();
+    burnedCard.moveTo(this.burnLocation);
+}
+
+Game.prototype.draw = function() {
+    for (let player of this.getPlayers()) {
+        player.drew = player.drawCard(true);
+        if (player.drew === undefined) {
+            this.gameOver(player); 
+            return;
+        };
+    }
+
+    const p1 = this.player1;
+    const p2 = this.player2;
+
+    if (p1.drew.val > p2.drew.val) this.endRound(p1, p2, p1.drew, p2.drew);
+    else if (p1.drew.val < p2.drew.val) this.endRound(p2, p1, p2.drew, p1.drew);
+    else if (p1.drew.val === p2.drew.val) this.goToWar(p1.drew,p2.drew);
 }
 
 Game.prototype.endRound = function(winner, loser, winCard, loseCard) {
@@ -180,23 +202,6 @@ Game.prototype.goToWar = function(card1,card2) {
     this.cardPot.push(card1,card2);
 
     $display.innerText = `War! Both players drew ${valToName(card1.val)}. There are ${this.cardPot.length} cards in the pot.`;
-}
-
-Game.prototype.draw = function() {
-    for (let player of this.getPlayers()) {
-        player.drew = player.drawCard(true);
-        if (player.drew === undefined) {
-            this.gameOver(player); 
-            return;
-        };
-    }
-
-    const p1 = this.player1;
-    const p2 = this.player2;
-
-    if (p1.drew.val > p2.drew.val) this.endRound(p1, p2, p1.drew, p2.drew);
-    else if (p1.drew.val < p2.drew.val) this.endRound(p2, p1, p2.drew, p1.drew);
-    else if (p1.drew.val === p2.drew.val) this.goToWar(p1.drew,p2.drew);
 }
 
 Game.prototype.gameOver = function(loser) {
