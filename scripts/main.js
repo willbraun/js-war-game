@@ -117,6 +117,14 @@ const getElementY = function(element) {
     return element.getBoundingClientRect().top;
 }
 
+const getDistanceX = function(startElement,endElement) {
+    return getElementX(endElement) - getElementX(startElement);
+}
+
+const getDistanceY = function(startElement,endElement) {
+    return getElementY(endElement) - getElementY(startElement);
+} 
+
 const moveElement = function(elementToMove, endPositionElement) {
     elementToMove.style.setProperty('--x-distance',`${getElementX(endPositionElement) - getElementX(elementToMove)}px`);
     elementToMove.style.setProperty('--y-distance',`${getElementY(endPositionElement) - getElementY(elementToMove)}px`);
@@ -124,13 +132,25 @@ const moveElement = function(elementToMove, endPositionElement) {
     console.log(elementToMove);
 }
 
+Card.prototype.setCSSDistances = function(endPositionElement) {
+    this.domElement.style.setProperty('--x-distance',`${getDistanceX(this.domElement,endPositionElement)}px`);
+    this.domElement.style.setProperty('--y-distance',`${getDistanceY(this.domElement,endPositionElement)}px`);
+}
+
+Card.prototype.moveTo = function(endPositionElement) {
+    this.setCSSDistances(endPositionElement);
+    this.domElement.classList.add('move');
+    setTimeout(() => this.domElement.classList.remove('move'),1000);
+}
+
 Player.prototype.drawCard = function(showCard) {
     const drawnCard = this.cards.pop();
+    drawnCard.domElement = this.deckLocation.querySelector('.card'); // this will be set in the display cards function earlier
+    console.log(drawnCard.domElement);
     if (showCard) {
-        const testCard = this.deckLocation.querySelector('.card');
-        testCard.classList.add('face-up');
-        moveElement(testCard,this.cardLocation);
-        testCard.classList.add('move');
+        //const testCard = this.deckLocation.querySelector('.card');
+        drawnCard.domElement.classList.add('face-up');
+        drawnCard.moveTo(this.cardLocation);
     }
     // drawnCard.domElement
 

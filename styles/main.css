@@ -133,7 +133,11 @@ img {
 .move {
     /*transform: translate(var(--end-x) - var(--start-x), var(--end-y) - var(--start-y));*/
     transform: translate(var(--x-distance), var(--y-distance));
+    x: 0;
+    y: 0;
 }
+
+
 
 .move-up-left {
     transform: translate(100px,-100px);
