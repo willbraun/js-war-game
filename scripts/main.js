@@ -15,15 +15,16 @@ const $temp = document.querySelector('.card-template');
 function Card({val, suit, faceUp = false}) { 
     this.val = val;
     this.suit = suit;
-    this.html = `
-    <div class="card">
-        <div class="front">
-            <img src="images/${valToName(val).toString().toLowerCase()}_of_${suit}.png" alt="${val} of ${suit}">
-        </div>
-        <div class="back">
-            <img src="images/back.png" alt="back of card">
-        </div>
-    </div>`;
+    // this.html = `
+    // <div class="card">
+    //     <div class="front">
+    //         <img src="images/${valToName(val).toString().toLowerCase()}_of_${suit}.png" alt="${val} of ${suit}">
+    //     </div>
+    //     <div class="back">
+    //         <img src="images/back.png" alt="back of card">
+    //     </div>
+    // </div>`;
+    this.element = null;
     this.faceUp = faceUp;
 }
 
@@ -58,14 +59,20 @@ function Game({player1Name, player2Name}) {
 }
 
 Game.prototype.displayCards = function() {
-    // loop through both players, and each of their decks to show all facedown
-    // create new element, append to deckLocation
-
+    // loop through both players, and each card in their deck
+    
+    // clone the template
     const clone1 = $temp.content.cloneNode(true);
     const clone2 = $temp.content.cloneNode(true);
     
-    //clone.querySelector('.front-img').src = "test string"; // string interpolation here for correct src
-    // line to update the z-index and bottom px styles on card class div
+    // edit the clone
+    // clone.querySelector('.front-img').src = "test string"; // string interpolation here for correct src and alt
+    // clone.querySelector('.front-img').alt = "test string"
+    // update the z-index and bottom px styles on card class div based on index in forEach, see below
+
+    // reference clone from that card's element property. card.element = clone;
+
+    // append clone to that player's deckLocation
     this.player1.deckLocation.appendChild(clone1);
     this.player2.deckLocation.appendChild(clone2);
     
@@ -103,8 +110,7 @@ Game.prototype.displayCards = function() {
 Player.prototype.drawCard = function(showCard) {
     const drawnCard = this.cards.pop();
     //this.cardLocation.innerHTML = `<img src="${drawnCard.frontPath}" class="card">`;
-    this.deckLocation.children[0].classList.add('faceUp');
-    //this.deckLocation.querySelector('.card').classList.add('faceUp');
+    if (showCard) this.deckLocation.querySelector('.card').classList.add('faceUp');
 
     drawnCard.faceUp = showCard;
     return drawnCard;

@@ -111,8 +111,8 @@
     backface-visibility: hidden;
 }
 
-.back {
-    transform: rotateY(180deg);
+.front {
+    transform: rotateX(180deg);
 }
 
 img {
@@ -121,5 +121,5 @@ img {
 }
 
 .faceUp .card-inner {
-    transform: rotateY(180deg);
+    transform: rotateX(180deg);
 }
