@@ -10,6 +10,7 @@ const $p2Card = document.querySelector('.p2Card');
 const $p1Deck = document.querySelector('.p1Deck');
 const $p2Deck = document.querySelector('.p2Deck');
 const $cardPot = document.querySelector('.cardPot');
+const $temp = document.querySelector('.card-template');
 
 function Card({val, suit, faceUp = false}) { 
     this.val = val;
@@ -57,9 +58,19 @@ function Game({player1Name, player2Name}) {
 }
 
 Game.prototype.displayCards = function() {
+    // loop through both players, and each of their decks to show all facedown
     // create new element, append to deckLocation
 
-    document.getElementsByClassName('card')[0].classList.add('faceUp');
+    const clone1 = $temp.content.cloneNode(true);
+    const clone2 = $temp.content.cloneNode(true);
+    
+    //clone.querySelector('.front-img').src = "test string"; // string interpolation here for correct src
+    // line to update the z-index and bottom px styles on card class div
+    this.player1.deckLocation.appendChild(clone1);
+    this.player2.deckLocation.appendChild(clone2);
+    
+
+    
 
     // const cardDiv = document.createElement('div');
     // const frontDiv = document.createElement('div');
@@ -92,7 +103,8 @@ Game.prototype.displayCards = function() {
 Player.prototype.drawCard = function(showCard) {
     const drawnCard = this.cards.pop();
     //this.cardLocation.innerHTML = `<img src="${drawnCard.frontPath}" class="card">`;
-    
+    this.deckLocation.children[0].classList.add('faceUp');
+    //this.deckLocation.querySelector('.card').classList.add('faceUp');
 
     drawnCard.faceUp = showCard;
     return drawnCard;
