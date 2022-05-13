@@ -134,35 +134,26 @@ Game.prototype.getPlayers = function() {
     return Object.values(this).filter(player => player instanceof Player);
 }
 
-Player.prototype.drawCard = function(showCard) {
-    const drawnCard = this.cards.pop();
-
-    if (showCard) {
-        drawnCard.moveTo(this.cardLocation);
-        drawnCard.flipUp();
-    }
-    else {
-        // move to cardpot, may need to make this a Game method
-        // if so, update draw and goToWar functions
-    }
-
-    return drawnCard;
+Player.prototype.drawCard = function() {
+    return this.cards.pop();
 }
 
 Player.prototype.playCard = function() {
     const playedCard = this.drawCard();
     playedCard.moveTo(this.cardLocation);
     playedCard.flipUp();
+    return playedCard;
 }
 
 Player.prototype.burnCard = function() {
     const burnedCard = this.drawCard();
     burnedCard.moveTo(this.burnLocation);
+    return burnedCard;
 }
 
 Game.prototype.draw = function() {
     for (let player of this.getPlayers()) {
-        player.drew = player.drawCard(true);
+        player.drew = player.playCard();
         if (player.drew === undefined) {
             this.gameOver(player); 
             return;
@@ -198,7 +189,7 @@ Game.prototype.goToWar = function(card1,card2) {
         }
     }
     
-    this.getPlayers().forEach(player => Array(3).fill().forEach(() => this.cardPot.push(player.drawCard(false))));
+    this.getPlayers().forEach(player => Array(3).fill().forEach(() => this.cardPot.push(player.burnCard())));
     this.cardPot.push(card1,card2);
 
     $display.innerText = `War! Both players drew ${valToName(card1.val)}. There are ${this.cardPot.length} cards in the pot.`;
