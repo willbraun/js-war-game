@@ -68,47 +68,35 @@ const editImgSrcAlt = function(img, newSrc, newAlt) {
     img.alt = newAlt;
 }
 
+const createCardDOMElement = function(card) {
+    const clone = cloneTemplate($cardTemplate).children[0];
+    editImgSrcAlt(clone.querySelector('.front-img'),`images/${valToName(card.val).toString().toLowerCase()}_of_${card.suit}.png`,`${valToName(card.val).toString()} of ${card.suit}`);
+    card.domElement = clone;
+}
+
 Game.prototype.displayCards = function() {
     // loop through both players, and each card in their deck
-    
-    // clone the template
-    const clone1 = $cardTemplate.content.cloneNode(true);
-    const clone2 = $cardTemplate.content.cloneNode(true);
-
-    const myClone = cloneTemplate($cardTemplate);
-    
-    editImgSrcAlt(myClone.querySelector('.front-img'),'front source','front alt'); // string interpolation
-    
-    console.log(myClone);
-
-    // reference clone from that card's element property. card.element = clone;
     const testCard = new Card({val: 2, suit: 'spades'});
-    testCard.domElement = clone1;
+    createCardDOMElement(testCard);
+    
+    this.getPlayers().forEach(player => player.cards.forEach(card => {
+        createCardDOMElement(card);
+        card.moveTo(player.deckLocation);
+        }));
 
-    // append clone to that player's deckLocation
-    this.player1.deckLocation.appendChild(clone1);
-    this.player2.deckLocation.appendChild(clone2);
-
-
-
-
-    // cardDiv.classList.add('card');
-    // frontDiv.classList.add('front');
-    // backDiv.classList.add('back');
+    //const myClone = cloneTemplate($cardTemplate);
+     // string interpolation
     // frontImg.src = `images/${valToName(val).toString().toLowerCase()}_of_${suit}.png`;
     // frontImg.alt = `${val} of ${suit}`;
-    // backImg.
 
+    //console.log(myClone);
 
-    // cardDiv.appendChild(frontDiv).appendChild(backDiv);
+    // reference clone from that card's element property. card.element = clone;
     
-    
-    // this.getPlayers().forEach(player => {
-    //     let deckHTML = player.cards.map((card,i) => {
-    //         return `<img src="images/back.png" class="card" style="z-index: ${i}; bottom: ${i * 3}px">`;
-    //     }).join('');
-    //     player.deckLocation.innerHTML = deckHTML;
-    // });
+    // testCard.domElement = myClone;
+
+    // // append clone to that player's deckLocation
+    // this.player1.deckLocation.appendChild(myClone);
 
 };
 
@@ -141,6 +129,13 @@ Card.prototype.moveTo = function(destinationCardContainer) {
         this.domElement.classList.remove('move');
     }, 600);
 }
+
+const stackCards = function(cardContainer) {
+
+    //style="z-index: ${i}; bottom: ${i * 3}px">`;
+}
+
+
 
 Card.prototype.flipUp = function() {
     this.domElement.classList.add('face-up');
@@ -236,3 +231,21 @@ $draw.addEventListener('click', game.draw.bind(game));
 $playFull.addEventListener('click', game.playFullGame.bind(game));
 
 })();
+
+
+    // cardDiv.classList.add('card');
+    // frontDiv.classList.add('front');
+    // backDiv.classList.add('back');
+
+    // backImg.
+
+
+    // cardDiv.appendChild(frontDiv).appendChild(backDiv);
+    
+    
+    // this.getPlayers().forEach(player => {
+    //     let deckHTML = player.cards.map((card,i) => {
+    //         return `<img src="images/back.png" class="card" style="z-index: ${i}; bottom: ${i * 3}px">`;
+    //     }).join('');
+    //     player.deckLocation.innerHTML = deckHTML;
+    // });
