@@ -11,10 +11,18 @@ const $p1Deck = document.querySelector('.p1Deck');
 const $p2Deck = document.querySelector('.p2Deck');
 const $cardPot = document.querySelector('.cardPot');
 
-function Card({val, suit, frontPath, faceUp = false}) { 
+function Card({val, suit, faceUp = false}) { 
     this.val = val;
     this.suit = suit;
-    this.frontPath = frontPath;
+    this.html = `
+    <div class="card">
+        <div class="front">
+            <img src="images/${valToName(val).toString().toLowerCase()}_of_${suit}.png" alt="${val} of ${suit}">
+        </div>
+        <div class="back">
+            <img src="images/back.png" alt="back of card">
+        </div>
+    </div>`;
     this.faceUp = faceUp;
 }
 
@@ -26,7 +34,7 @@ function Deck() {
 
     suits.forEach(suit => numbers
         .forEach(num => this.cards
-        .push(new Card({val: num, suit: suit, frontPath: `images/${valToName(num).toString().toLowerCase()}_of_${suit}.png`}))));
+        .push(new Card({val: num, suit: suit}))));
     
     this.cards.sort(() => Math.random() - 0.5);
 }
@@ -46,21 +54,44 @@ function Game({player1Name, player2Name}) {
     this.player2 = new Player({name: player2Name, cards: gameDeck.slice(26,52), cardLocation: $p2Card, deckLocation: $p2Deck});
     this.cardPot = [];
     this.active = true;
-
 }
 
 Game.prototype.displayCards = function() {
-    this.getPlayers().forEach(player => {
-        let deckHTML = player.cards.map((card,i) => {
-            return `<img src="images/back.png" class="card" style="z-index: ${i}; bottom: ${i * 3}px">`;
-        }).join('');
-        player.deckLocation.innerHTML = deckHTML;
-    });
+    // create new element, append to deckLocation
+
+    document.getElementsByClassName('card')[0].classList.add('faceUp');
+
+    // const cardDiv = document.createElement('div');
+    // const frontDiv = document.createElement('div');
+    // const backDiv = document.createElement('div');
+    // const frontImg = document.createElement('img');
+    // const backImg = document.createElement('img');
+
+    // cardDiv.classList.add('card');
+    // frontDiv.classList.add('front');
+    // backDiv.classList.add('back');
+    // frontImg.src = `images/${valToName(val).toString().toLowerCase()}_of_${suit}.png`;
+    // frontImg.alt = `${val} of ${suit}`;
+    // backImg.
+
+
+    // cardDiv.appendChild(frontDiv).appendChild(backDiv);
+    
+    
+    // this.getPlayers().forEach(player => {
+    //     let deckHTML = player.cards.map((card,i) => {
+    //         return `<img src="images/back.png" class="card" style="z-index: ${i}; bottom: ${i * 3}px">`;
+    //     }).join('');
+    //     player.deckLocation.innerHTML = deckHTML;
+    // });
+
 };
+
+
 
 Player.prototype.drawCard = function(showCard) {
     const drawnCard = this.cards.pop();
-    this.cardLocation.innerHTML = `<img src="${drawnCard.frontPath}" class="card">`;
+    //this.cardLocation.innerHTML = `<img src="${drawnCard.frontPath}" class="card">`;
     
 
     drawnCard.faceUp = showCard;
