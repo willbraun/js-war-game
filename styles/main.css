@@ -29,6 +29,7 @@
     grid-area: game-table;
     background-color: rgb(130, 189, 134);
     padding: 20px;
+    border-radius: 10px;
 }
 
 .display {

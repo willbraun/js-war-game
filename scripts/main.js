@@ -74,30 +74,22 @@ const createCardDOMElement = function(card) {
     card.domElement = clone;
 }
 
-Game.prototype.displayCards = function() {
-    // loop through both players, and each card in their deck
-    const testCard = new Card({val: 2, suit: 'spades'});
-    createCardDOMElement(testCard);
-    
-    this.getPlayers().forEach(player => player.cards.forEach(card => {
-        createCardDOMElement(card);
-        card.moveTo(player.deckLocation);
-        }));
+const stackCards = function(cardContainer) {
+    let cards = cardContainer.querySelectorAll('.card');
 
-    //const myClone = cloneTemplate($cardTemplate);
-     // string interpolation
-    // frontImg.src = `images/${valToName(val).toString().toLowerCase()}_of_${suit}.png`;
-    // frontImg.alt = `${val} of ${suit}`;
+    cards.forEach((card,i) => {
+        console.log(i);
+        card.style.zIndex = `${i}`;
+        card.style.bottom = `${i + 3}px`;
+})};
 
-    //console.log(myClone);
-
-    // reference clone from that card's element property. card.element = clone;
-    
-    // testCard.domElement = myClone;
-
-    // // append clone to that player's deckLocation
-    // this.player1.deckLocation.appendChild(myClone);
-
+Game.prototype.startGame = function() {
+    this.getPlayers().forEach(player => {
+        player.cards.forEach(card => {
+            createCardDOMElement(card);
+            card.moveTo(player.deckLocation);
+        });
+    });
 };
 
 const getElementX = function(element) {
@@ -126,16 +118,11 @@ Card.prototype.moveTo = function(destinationCardContainer) {
     this.domElement.classList.add('move');
     setTimeout(() => {
         destinationCardContainer.appendChild(this.domElement);
+        stackCards(destinationCardContainer);
         this.domElement.classList.remove('move');
     }, 600);
+    
 }
-
-const stackCards = function(cardContainer) {
-
-    //style="z-index: ${i}; bottom: ${i * 3}px">`;
-}
-
-
 
 Card.prototype.flipUp = function() {
     this.domElement.classList.add('face-up');
@@ -147,8 +134,7 @@ Card.prototype.flipDown = function() {
 
 Player.prototype.drawCard = function(showCard) {
     const drawnCard = this.cards.pop();
-    drawnCard.domElement = this.deckLocation.querySelector('.card'); // this will be set in the display cards function earlier
-    console.log(drawnCard.domElement);
+
     if (showCard) {
         drawnCard.moveTo(this.cardLocation);
         drawnCard.flipUp();
@@ -225,27 +211,9 @@ Game.prototype.playFullGame = function() {
 } 
 
 const game = new Game({player1Name: 'Player 1', player2Name: 'Player 2'});
-game.displayCards.call(game);
+game.startGame.call(game);
 
 $draw.addEventListener('click', game.draw.bind(game));
 $playFull.addEventListener('click', game.playFullGame.bind(game));
 
 })();
-
-
-    // cardDiv.classList.add('card');
-    // frontDiv.classList.add('front');
-    // backDiv.classList.add('back');
-
-    // backImg.
-
-
-    // cardDiv.appendChild(frontDiv).appendChild(backDiv);
-    
-    
-    // this.getPlayers().forEach(player => {
-    //     let deckHTML = player.cards.map((card,i) => {
-    //         return `<img src="images/back.png" class="card" style="z-index: ${i}; bottom: ${i * 3}px">`;
-    //     }).join('');
-    //     player.deckLocation.innerHTML = deckHTML;
-    // });
