@@ -10,9 +10,9 @@ const $p2Card = document.querySelector('.p2Card');
 const $p1Deck = document.querySelector('.p1Deck');
 const $p2Deck = document.querySelector('.p2Deck');
 const $cardPot = document.querySelector('.cardPot');
-const $temp = document.querySelector('.card-template');
+const $cardTemplate = document.querySelector('.card-template');
 
-function Card({val, suit, faceUp = false}) { 
+function Card({val, suit}) { 
     this.val = val;
     this.suit = suit;
     // this.html = `
@@ -25,7 +25,6 @@ function Card({val, suit, faceUp = false}) {
     //     </div>
     // </div>`;
     this.domElement = null;
-    this.faceUp = faceUp;
 }
 
 function Deck() {
@@ -60,17 +59,27 @@ Deck.prototype.shuffle = function() {
     this.cards.sort(() => Math.random() - 0.5);
 }
 
+const cloneTemplate = function(template) {
+    return template.content.cloneNode(true);
+}
+
+const editImgSrcAlt = function(img, newSrc, newAlt) {
+    img.src = newSrc;
+    img.alt = newAlt;
+}
+
 Game.prototype.displayCards = function() {
     // loop through both players, and each card in their deck
     
     // clone the template
-    const clone1 = $temp.content.cloneNode(true);
-    const clone2 = $temp.content.cloneNode(true);
+    const clone1 = $cardTemplate.content.cloneNode(true);
+    const clone2 = $cardTemplate.content.cloneNode(true);
+
+    const myClone = cloneTemplate($cardTemplate);
     
-    // edit the clone
-    // clone.querySelector('.front-img').src = "test string"; // string interpolation here for correct src and alt
-    // clone.querySelector('.front-img').alt = "test string"
-    // update the z-index and bottom px styles on card class div based on index in forEach, see below
+    editImgSrcAlt(myClone.querySelector('.front-img'),'front source','front alt'); // string interpolation
+    
+    console.log(myClone);
 
     // reference clone from that card's element property. card.element = clone;
     const testCard = new Card({val: 2, suit: 'spades'});
@@ -79,15 +88,9 @@ Game.prototype.displayCards = function() {
     // append clone to that player's deckLocation
     this.player1.deckLocation.appendChild(clone1);
     this.player2.deckLocation.appendChild(clone2);
-    
 
-    
 
-    // const cardDiv = document.createElement('div');
-    // const frontDiv = document.createElement('div');
-    // const backDiv = document.createElement('div');
-    // const frontImg = document.createElement('img');
-    // const backImg = document.createElement('img');
+
 
     // cardDiv.classList.add('card');
     // frontDiv.classList.add('front');
@@ -125,22 +128,26 @@ const getDistanceY = function(startElement,endElement) {
     return getElementY(endElement) - getElementY(startElement);
 } 
 
-const moveElement = function(elementToMove, endPositionElement) {
-    elementToMove.style.setProperty('--x-distance',`${getElementX(endPositionElement) - getElementX(elementToMove)}px`);
-    elementToMove.style.setProperty('--y-distance',`${getElementY(endPositionElement) - getElementY(elementToMove)}px`);
-
-    console.log(elementToMove);
-}
-
 Card.prototype.setCSSDistances = function(endPositionElement) {
     this.domElement.style.setProperty('--x-distance',`${getDistanceX(this.domElement,endPositionElement)}px`);
     this.domElement.style.setProperty('--y-distance',`${getDistanceY(this.domElement,endPositionElement)}px`);
 }
 
-Card.prototype.moveTo = function(endPositionElement) {
-    this.setCSSDistances(endPositionElement);
+Card.prototype.moveTo = function(destinationCardContainer) {
+    this.setCSSDistances(destinationCardContainer);
     this.domElement.classList.add('move');
-    setTimeout(() => this.domElement.classList.remove('move'),1000);
+    setTimeout(() => {
+        destinationCardContainer.appendChild(this.domElement);
+        this.domElement.classList.remove('move');
+    }, 600);
+}
+
+Card.prototype.flipUp = function() {
+    this.domElement.classList.add('face-up');
+}
+
+Card.prototype.flipDown = function() {
+    this.domElement.classList.remove('face-up');
 }
 
 Player.prototype.drawCard = function(showCard) {
@@ -148,13 +155,10 @@ Player.prototype.drawCard = function(showCard) {
     drawnCard.domElement = this.deckLocation.querySelector('.card'); // this will be set in the display cards function earlier
     console.log(drawnCard.domElement);
     if (showCard) {
-        //const testCard = this.deckLocation.querySelector('.card');
-        drawnCard.domElement.classList.add('face-up');
         drawnCard.moveTo(this.cardLocation);
+        drawnCard.flipUp();
     }
-    // drawnCard.domElement
 
-    drawnCard.faceUp = showCard;
     return drawnCard;
 }
 
