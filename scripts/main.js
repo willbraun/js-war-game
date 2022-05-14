@@ -110,12 +110,20 @@ Card.prototype.setCSSDistances = function(endPositionElement) {
     this.domElement.style.setProperty('--y-distance',`${getDistanceY(this.domElement,endPositionElement)}px`);
 }
 
-Card.prototype.moveToUI = function(destinationCardContainer) {
+Card.prototype.moveToUI = function(destinationCardContainer,topOfDeck = false) {
     this.setCSSDistances(destinationCardContainer);
     this.domElement.classList.add('move');
+    this.flipDown();
     
     setTimeout(() => {
-        destinationCardContainer.appendChild(this.domElement);
+        if (topOfDeck) {
+            destinationCardContainer.appendChild(this.domElement);
+        }
+        else {
+            destinationCardContainer.prepend(this.domElement);
+        }
+        
+        
         stackCards(destinationCardContainer);
         this.domElement.classList.remove('move');
     }, 600);
@@ -129,7 +137,7 @@ Game.prototype.startGame = function() {
     this.getPlayers().forEach(player => {
         player.cards.forEach(card => {
             createCardDOMElement(card);
-            card.moveToUI(player.deckLocation);
+            card.moveToUI(player.deckLocation, true);
         });
     });
 };
@@ -178,19 +186,17 @@ Game.prototype.moveTableCardsToWinner = function() {
 Game.prototype.moveTableCardsToPot = function() {
     this.getPlayers().forEach(player => {
         player.drew.moveToUI($cardPot);
-        this.cardPot.push(player.drew);
+        player.drew.moveToArray(this.cardPot);
     });
 }
 
 Game.prototype.clearForNextTurn = function() {
-    console.log(this.previousRoundWinner);
     if (this.previousRoundWinner) {
         this.moveTableCardsToWinner();
     }
     else {
         this.moveTableCardsToPot();
         this.getPlayers().forEach(player => Array(3).fill().forEach(() => this.cardPot.push(player.burnCard())));
-        
     }
 }
 
