@@ -228,6 +228,7 @@ Game.prototype.draw = function() {
 
 Game.prototype.endRound = function(winner, loser, winCard, loseCard) {
     if (loser.cards.length === 0) {
+        console.log('end on no war');
         this.gameOver(loser);
         return;
     }
@@ -237,9 +238,15 @@ Game.prototype.endRound = function(winner, loser, winCard, loseCard) {
     ${this.player1.name} has ${this.player1.cards.length} cards remaining, ${this.player2.name} has ${this.player2.cards.length} cards remaining.`;
 }
 
+Player.prototype.burnAllCards = function() {
+    this.cards.forEach(() => this.burnCard());
+}
+
 Game.prototype.goToWar = function(card1,card2) {
     for (let player of this.getPlayers()) {
         if (player.cards.length < 4) {
+            console.log('end on war');
+            player.burnAllCards();
             this.gameOver(player);
             return;
         }
