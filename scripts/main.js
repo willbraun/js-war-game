@@ -37,7 +37,8 @@ function Player({name, cards, cardLocation, deckLocation}) {
     this.drew = null;
 }
 
-// function Location({domElement, array}) {
+// function Location({name, domElement, array}) {
+//     this.name = name;
 //     this.domElement = domElement;
 //     this.array = array;
 // }
@@ -120,6 +121,10 @@ Card.prototype.moveToUI = function(destinationCardContainer) {
     }, 600);
 }
 
+Card.prototype.moveToArray = function(destinationArray) {
+    destinationArray.unshift(this);
+}
+
 Game.prototype.startGame = function() {
     this.getPlayers().forEach(player => {
         player.cards.forEach(card => {
@@ -158,19 +163,50 @@ Player.prototype.burnCard = function() {
     return burnedCard;
 }
 
-Game.prototype.moveAllToWinner = function() {
-    this.getPlayers().forEach(player => player.drew.moveToUI(this.previousRoundWinner.deckLocation))
-    this.cardPot.forEach(card => card.moveToUI(this.previousRoundWinner.deckLocation));
+Game.prototype.moveTableCardsToWinner = function() {
+    this.getPlayers().forEach(player => {
+        player.drew.moveToUI(this.previousRoundWinner.deckLocation);
+        player.drew.moveToArray(this.previousRoundWinner.cards);
+    })
+    this.cardPot.forEach(card => {
+        card.moveToUI(this.previousRoundWinner.deckLocation);
+        card.moveToArray(this.previousRoundWinner.cards);
+    });
+    this.cardPot = [];
 }
 
-// Game.prototype.movePlayedCardsToPot = function() {
-//     this.getPlayers().forEach(player => player.drew.moveToUI($cardPot));
-// }
+Game.prototype.moveTableCardsToPot = function() {
+    this.getPlayers().forEach(player => {
+        player.drew.moveToUI($cardPot);
+        this.cardPot.push(player.drew);
+    });
+}
+
+Game.prototype.clearForNextTurn = function() {
+    console.log(this.previousRoundWinner);
+    if (this.previousRoundWinner) {
+        this.moveTableCardsToWinner();
+    }
+    else {
+        this.moveTableCardsToPot();
+        this.getPlayers().forEach(player => Array(3).fill().forEach(() => this.cardPot.push(player.burnCard())));
+        
+    }
+}
+
+Game.prototype.checkIfWar = function() {
+    const p1 = this.player1;
+    const p2 = this.player2;
+
+    if (p1.drew.val > p2.drew.val) this.endRound(p1, p2, p1.drew, p2.drew);
+    else if (p1.drew.val < p2.drew.val) this.endRound(p2, p1, p2.drew, p1.drew);
+    else if (p1.drew.val === p2.drew.val) this.goToWar(p1.drew,p2.drew);
+}
 
 Game.prototype.draw = function() {
-    if (this.player1.drew && this.previousRoundWinner) {
-        this.moveAllToWinner();
-    }
+    if (this.player1.drew) {
+        this.clearForNextTurn();
+    }   
  
     for (let player of this.getPlayers()) {
         player.drew = player.playCard();
@@ -181,12 +217,7 @@ Game.prototype.draw = function() {
         };
     }
 
-    const p1 = this.player1;
-    const p2 = this.player2;
-
-    if (p1.drew.val > p2.drew.val) this.endRound(p1, p2, p1.drew, p2.drew);
-    else if (p1.drew.val < p2.drew.val) this.endRound(p2, p1, p2.drew, p1.drew);
-    else if (p1.drew.val === p2.drew.val) this.goToWar(p1.drew,p2.drew);
+    this.checkIfWar();
 }
 
 Game.prototype.endRound = function(winner, loser, winCard, loseCard) {
@@ -194,9 +225,6 @@ Game.prototype.endRound = function(winner, loser, winCard, loseCard) {
         this.gameOver(loser);
         return;
     }
-
-    winner.cards.unshift(winCard, loseCard, ...this.cardPot);
-    this.cardPot = [];
     this.previousRoundWinner = winner;
     
     $display.innerText = `${winner.name} wins this round. ${winner.name} drew ${valToName(winCard.val)}, and ${loser.name} drew ${valToName(loseCard.val)}. 
@@ -210,14 +238,9 @@ Game.prototype.goToWar = function(card1,card2) {
             return;
         }
     }
-    
-    this.getPlayers().forEach(player => Array(3).fill().forEach(() => this.cardPot.push(player.burnCard())));
-    this.cardPot.push(card1,card2);
-    console.log(`cardPot has ${this.cardPot.length} cards`);
-
-    $display.innerText = `War! Both players drew ${valToName(card1.val)}. There are ${this.cardPot.length} cards in the pot.`;
-
     this.previousRoundWinner = null;
+    
+    $display.innerText = `War! Both players drew ${valToName(card1.val)}. There are ${this.cardPot.length} cards in the pot.`;
 }
 
 Game.prototype.gameOver = function(loser) {
