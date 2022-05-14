@@ -93,7 +93,7 @@
     height: 100%;
     width: 100%;
     background-color: transparent;
-    transition: transform 0.6s;
+    transition: transform 0.5s;
     transform-style: preserve-3d;
     --x-distance: 0;
     --y-distance: 0;

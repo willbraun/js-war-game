@@ -283,7 +283,7 @@ Game.prototype.goToWar = function(card1,card2) {
 }
 
 Game.prototype.gameOver = function(loser) {
-    $display.innerText = `Game over, ${loser.name} has no more cards. ${this.getPlayers().find(player => player !== loser).name} is the winner!`;
+    $display.innerText = `Game over. ${this.getPlayers().find(player => player !== loser).name} wins!`;
     this.active = false;
 }
 
