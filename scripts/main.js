@@ -86,7 +86,7 @@ const stackCards = function(cardContainer) {
 
     cards.forEach((card,i) => {
         card.style.zIndex = `${i}`;
-        card.style.bottom = `${i * 3}px`;
+        card.style.bottom = `${i * 4}px`;
 })};
 
 const getElementX = function(element) {
@@ -233,9 +233,6 @@ Game.prototype.endRound = function(winner, loser, winCard, loseCard) {
         return;
     }
     this.previousRoundWinner = winner;
-    
-    $display.innerText = `${winner.name} wins this round. ${winner.name} drew ${valToName(winCard.val)}, and ${loser.name} drew ${valToName(loseCard.val)}. 
-    ${this.player1.name} has ${this.player1.cards.length} cards remaining, ${this.player2.name} has ${this.player2.cards.length} cards remaining.`;
 }
 
 Player.prototype.burnAllCards = function() {
@@ -253,7 +250,7 @@ Game.prototype.goToWar = function(card1,card2) {
     }
     this.previousRoundWinner = null;
     
-    $display.innerText = `War! Both players drew ${valToName(card1.val)}. There are ${this.cardPot.length} cards in the pot.`;
+    $display.innerText = `War!`;
 }
 
 Game.prototype.gameOver = function(loser) {

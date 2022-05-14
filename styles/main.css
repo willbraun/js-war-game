@@ -1,16 +1,20 @@
 .game-container {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
-    grid-template-rows: 0.1fr 1fr 0.1fr;
+    grid-template-columns: 0.5fr 1fr 1fr 1fr 0.5fr;
+    grid-template-rows: 0.2fr 1fr 0.1fr;
     grid-template-areas: 
         ". display display display ."
         "player1 game-table game-table game-table player2"
         ". . draw . playFullGame";
     margin: auto;
-    height: 700px;
-    width: 1700px;
+    padding-top: 3vh;
+    height: 90vh;
+    width: 90vw;
+    max-height: 650px;
+    max-width: 1200px;
     row-gap: 5%;
     column-gap: 3%;
+    font-family: Georgia;
 }
 
 .game-table {
@@ -31,39 +35,38 @@
 .display {
     grid-area: display;
     border: 1px solid;
+    text-align: center;
+    font-size: 3rem;
 }
 
 .player1 {
     grid-area: player1;
+    background-color: red;
 }
 
 .player2 {
     grid-area: player2;
+    background-color: blue;
 }
 
 .p1Card {
     grid-area: p1Card;
-    border: 1px solid;
 }
 
 .p2Card {
     grid-area: p2Card;
-    border: 1px solid;
 }
 
 .p1Deck {
     grid-area: p1Deck;
-    border: 1px solid;
 }
 
 .p2Deck {
     grid-area: p2Deck;
-    border: 1px solid;
 }
 
 .cardPot {
     grid-area: cardPot;
-    border: 1px solid;
 }
 
 .draw {
@@ -94,17 +97,17 @@
     transform-style: preserve-3d;
     --x-distance: 0;
     --y-distance: 0;
+    animation: winning-card 1s;
 }
 
 .card-inner {
     width: 100%;
     height: 100%;
-    border: 1px solid black;
+    border: 1px solid;
     border-radius: 6%;
     text-align: center;
     transition: transform 0.6s;
     transform-style: preserve-3d;
-    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
 }
 
 .front, .back {
@@ -126,8 +129,18 @@ img {
 
 .face-up .card-inner {
     transform: rotateX(180deg);
+    
 }
 
 .move {
     transform: translate(var(--x-distance), var(--y-distance));
 }
+
+@keyframes createBox {
+    from {
+      transform: scale(0);
+    }
+    to {
+      transform: scale(1);
+    }
+  }
