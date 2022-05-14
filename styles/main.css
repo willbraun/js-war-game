@@ -97,7 +97,7 @@
     transform-style: preserve-3d;
     --x-distance: 0;
     --y-distance: 0;
-    animation: winning-card 1s;
+    /*animation: start-game 0.5s;*/
 }
 
 .card-inner {
@@ -136,11 +136,14 @@ img {
     transform: translate(var(--x-distance), var(--y-distance));
 }
 
-@keyframes createBox {
-    from {
-      transform: scale(0);
+/*@keyframes start-game {
+    0% {
+        transform: scale(0);
     }
-    to {
-      transform: scale(1);
+    60% {
+        transform: scale(0);
     }
-  }
+    100% {
+        transform: scale(1);
+    }
+  }*/

@@ -11,6 +11,7 @@ const $p1Deck = document.querySelector('.p1Deck');
 const $p2Deck = document.querySelector('.p2Deck');
 const $cardPot = document.querySelector('.cardPot');
 const $cardTemplate = document.querySelector('.card-template');
+const cardSeparation = 4;
 
 function Card({val, suit}) { 
     this.val = val;
@@ -86,7 +87,7 @@ const stackCards = function(cardContainer) {
 
     cards.forEach((card,i) => {
         card.style.zIndex = `${i}`;
-        card.style.bottom = `${i * 4}px`;
+        card.style.bottom = `${i * cardSeparation}px`;
 })};
 
 const getElementX = function(element) {
@@ -110,12 +111,41 @@ Card.prototype.setCSSDistances = function(endPositionElement) {
     this.domElement.style.setProperty('--y-distance',`${getDistanceY(this.domElement,endPositionElement)}px`);
 }
 
-Card.prototype.moveToUI = function(destinationCardContainer,topOfDeck = false) {
-    this.setCSSDistances(destinationCardContainer);
-    this.domElement.classList.add('move');
-    this.flipDown();
-    
+// const setCSSDistancesXY = function(domElement, newX, newY) {
+//     domElement.style.setProperty('--x-distance',`${newX - getElementX(domElement)}px`);
+//     domElement.style.setProperty('--y-distance',`${newY - getElementY(domElement)}px`);
+// }
+
+const animate = function(domElement, cssClass, animationTime, backgroundFunction) {
+    domElement.classList.add(cssClass);
     setTimeout(() => {
+        backgroundFunction();
+        domElement.classList.remove('move');
+    }, animationTime);
+}
+
+const shiftUp = function(domElement) {
+    domElement.style.bottom = `${Number(domElement.style.bottom.split('px')[0].trim()) + cardSeparation}px`;
+
+    // setCSSDistancesXY(domElement,getElementX(domElement), getElementY(domElement) - 4);
+    // animate(domElement,'move', 600, () => null);
+}
+
+const shiftCardsUp = function(cardContainer) {
+    let cardDomElements = cardContainer.querySelectorAll('.card');
+    cardDomElements.forEach(cardDomElement => shiftUp(cardDomElement));
+};
+
+// Card.prototype.slideUnder = function() {
+
+// }
+
+Card.prototype.moveToUI = function(destinationCardContainer,topOfDeck = false) {
+    this.flipDown();
+    this.setCSSDistances(destinationCardContainer);
+
+    shiftCardsUp(destinationCardContainer);
+    animate(this.domElement,'move', 600, () => {
         if (topOfDeck) {
             destinationCardContainer.appendChild(this.domElement);
         }
@@ -123,10 +153,8 @@ Card.prototype.moveToUI = function(destinationCardContainer,topOfDeck = false) {
             destinationCardContainer.prepend(this.domElement);
         }
         
-        
         stackCards(destinationCardContainer);
-        this.domElement.classList.remove('move');
-    }, 600);
+    });
 }
 
 Card.prototype.moveToArray = function(destinationArray) {
@@ -233,6 +261,7 @@ Game.prototype.endRound = function(winner, loser, winCard, loseCard) {
         return;
     }
     this.previousRoundWinner = winner;
+    $display.innerText = ``;
 }
 
 Player.prototype.burnAllCards = function() {
