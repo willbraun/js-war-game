@@ -37,6 +37,11 @@ function Player({name, cards, cardLocation, deckLocation}) {
     this.drew = null;
 }
 
+// function Location({domElement, array}) {
+//     this.domElement = domElement;
+//     this.array = array;
+// }
+
 function Game({player1Name, player2Name}) {
     const gameDeck = new Deck();
     gameDeck.shuffle();
@@ -44,6 +49,7 @@ function Game({player1Name, player2Name}) {
     this.player1 = new Player({name: player1Name, cards: gameDeck.cards.slice(0,26), cardLocation: $p1Card, deckLocation: $p1Deck});
     this.player2 = new Player({name: player2Name, cards: gameDeck.cards.slice(26,52), cardLocation: $p2Card, deckLocation: $p2Deck});
     this.cardPot = [];
+    this.previousRoundWinner = null;
     this.active = true;
 }
 
@@ -103,9 +109,10 @@ Card.prototype.setCSSDistances = function(endPositionElement) {
     this.domElement.style.setProperty('--y-distance',`${getDistanceY(this.domElement,endPositionElement)}px`);
 }
 
-Card.prototype.moveTo = function(destinationCardContainer) {
+Card.prototype.moveToUI = function(destinationCardContainer) {
     this.setCSSDistances(destinationCardContainer);
     this.domElement.classList.add('move');
+    
     setTimeout(() => {
         destinationCardContainer.appendChild(this.domElement);
         stackCards(destinationCardContainer);
@@ -117,7 +124,7 @@ Game.prototype.startGame = function() {
     this.getPlayers().forEach(player => {
         player.cards.forEach(card => {
             createCardDOMElement(card);
-            card.moveTo(player.deckLocation);
+            card.moveToUI(player.deckLocation);
         });
     });
 };
@@ -131,7 +138,7 @@ Card.prototype.flipDown = function() {
 }
 
 Game.prototype.getPlayers = function() {
-    return Object.values(this).filter(player => player instanceof Player);
+    return Object.entries(this).filter(entry => entry[0].includes('player')).map(entry => entry[1]);
 }
 
 Player.prototype.drawCard = function() {
@@ -140,20 +147,34 @@ Player.prototype.drawCard = function() {
 
 Player.prototype.playCard = function() {
     const playedCard = this.drawCard();
-    playedCard.moveTo(this.cardLocation);
+    playedCard.moveToUI(this.cardLocation);
     playedCard.flipUp();
     return playedCard;
 }
 
 Player.prototype.burnCard = function() {
     const burnedCard = this.drawCard();
-    burnedCard.moveTo(this.burnLocation);
+    burnedCard.moveToUI(this.burnLocation);
     return burnedCard;
 }
 
+Game.prototype.moveAllToWinner = function() {
+    this.getPlayers().forEach(player => player.drew.moveToUI(this.previousRoundWinner.deckLocation))
+    this.cardPot.forEach(card => card.moveToUI(this.previousRoundWinner.deckLocation));
+}
+
+// Game.prototype.movePlayedCardsToPot = function() {
+//     this.getPlayers().forEach(player => player.drew.moveToUI($cardPot));
+// }
+
 Game.prototype.draw = function() {
+    if (this.player1.drew && this.previousRoundWinner) {
+        this.moveAllToWinner();
+    }
+ 
     for (let player of this.getPlayers()) {
         player.drew = player.playCard();
+
         if (player.drew === undefined) {
             this.gameOver(player); 
             return;
@@ -173,9 +194,10 @@ Game.prototype.endRound = function(winner, loser, winCard, loseCard) {
         this.gameOver(loser);
         return;
     }
-    
+
     winner.cards.unshift(winCard, loseCard, ...this.cardPot);
     this.cardPot = [];
+    this.previousRoundWinner = winner;
     
     $display.innerText = `${winner.name} wins this round. ${winner.name} drew ${valToName(winCard.val)}, and ${loser.name} drew ${valToName(loseCard.val)}. 
     ${this.player1.name} has ${this.player1.cards.length} cards remaining, ${this.player2.name} has ${this.player2.cards.length} cards remaining.`;
@@ -191,8 +213,11 @@ Game.prototype.goToWar = function(card1,card2) {
     
     this.getPlayers().forEach(player => Array(3).fill().forEach(() => this.cardPot.push(player.burnCard())));
     this.cardPot.push(card1,card2);
+    console.log(`cardPot has ${this.cardPot.length} cards`);
 
     $display.innerText = `War! Both players drew ${valToName(card1.val)}. There are ${this.cardPot.length} cards in the pot.`;
+
+    this.previousRoundWinner = null;
 }
 
 Game.prototype.gameOver = function(loser) {
