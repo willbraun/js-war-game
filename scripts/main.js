@@ -49,8 +49,8 @@ function Game() {
     const gameDeck = new Deck();
     gameDeck.shuffle();
 
-    this.player1 = new Player({number: 1, name: null, cards: gameDeck.cards.slice(0,26), cardLocation: $p1Card, deckLocation: $p1Deck});
-    this.player2 = new Player({number: 2, name: null, cards: gameDeck.cards.slice(26,52), cardLocation: $p2Card, deckLocation: $p2Deck});
+    this.player1 = new Player({number: 1, name: 'Player 1', cards: gameDeck.cards.slice(0,26), cardLocation: $p1Card, deckLocation: $p1Deck});
+    this.player2 = new Player({number: 2, name: 'Player 2', cards: gameDeck.cards.slice(26,52), cardLocation: $p2Card, deckLocation: $p2Deck});
     this.cardPot = [];
     this.previousRoundWinner = null;
     this.active = true;
