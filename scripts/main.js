@@ -2,8 +2,8 @@
 
 'use strict';
 
+const $display = document.querySelector('.display');
 const $draw = document.querySelector('.draw');
-// const $display = document.querySelector('.display');
 const $playFull = document.querySelector('.playFullGame');
 const $p1Card = document.querySelector('.p1Card');
 const $p2Card = document.querySelector('.p2Card');
@@ -11,6 +11,7 @@ const $p1Deck = document.querySelector('.p1Deck');
 const $p2Deck = document.querySelector('.p2Deck');
 const $cardPot = document.querySelector('.cardPot');
 const $cardTemplate = document.querySelector('.card-template');
+
 
 const cardSeparation = 4;
 const moveTime = 600;
@@ -40,12 +41,6 @@ function Player({name, cards, cardLocation, deckLocation}) {
     this.burnLocation = $cardPot;
     this.drew = null;
 }
-
-// function Location({name, domElement, array}) {
-//     this.name = name;
-//     this.domElement = domElement;
-//     this.array = array;
-// }
 
 function Game({player1Name, player2Name}) {
     const gameDeck = new Deck();
@@ -114,11 +109,6 @@ Card.prototype.setCSSDistances = function(endPositionElement) {
     this.domElement.style.setProperty('--y-distance',`${getDistanceY(this.domElement,endPositionElement)}px`);
 }
 
-// const setCSSDistancesXY = function(domElement, newX, newY) {
-//     domElement.style.setProperty('--x-distance',`${newX - getElementX(domElement)}px`);
-//     domElement.style.setProperty('--y-distance',`${newY - getElementY(domElement)}px`);
-// }
-
 const animate = function(domElement, cssClass, animationTime, backgroundFunction) {
     domElement.classList.add(cssClass);
     setTimeout(() => {
@@ -129,19 +119,12 @@ const animate = function(domElement, cssClass, animationTime, backgroundFunction
 
 const shiftUp = function(domElement) {
     domElement.style.bottom = `${Number(domElement.style.bottom.split('px')[0].trim()) + cardSeparation}px`;
-
-    // setCSSDistancesXY(domElement,getElementX(domElement), getElementY(domElement) - 4);
-    // animate(domElement,'move', 600, () => null);
 }
 
 const shiftCardsUp = function(cardContainer) {
     let cardDomElements = cardContainer.querySelectorAll('.card');
     cardDomElements.forEach(cardDomElement => shiftUp(cardDomElement));
 };
-
-// Card.prototype.slideUnder = function() {
-
-// }
 
 Card.prototype.moveToUI = function(destinationCardContainer,topOfDeck = false) {
     this.flipDown();
@@ -169,6 +152,7 @@ Game.prototype.startGame = function() {
         player.cards.forEach(card => {
             createCardDOMElement(card);
             card.moveToUI(player.deckLocation, true);
+            animate(card.domElement,'create-deck', 3000, () => {});
         });
     });
 };
@@ -246,8 +230,8 @@ const disableButton = function() {
 }
 
 Game.prototype.draw = function() {
-    disableButton();
-    
+    // disableButton();
+
     if (this.player1.drew) {
         this.clearForNextTurn();
     }   
@@ -266,14 +250,12 @@ Game.prototype.draw = function() {
 
 Game.prototype.endRound = function(winner, loser) {
     if (loser.cards.length === 0) {
-        console.log('end on no war');
         this.gameOver(loser);
         return;
     }
 
     setTimeout(() => {animate(winner.drew.domElement,'winner-card', resultTime, () => {})}, moveTime);
     this.previousRoundWinner = winner;
-    // $display.innerText = ``;
 }
 
 Player.prototype.burnAllCards = function() {
@@ -283,7 +265,6 @@ Player.prototype.burnAllCards = function() {
 Game.prototype.goToWar = function() {
     for (let player of this.getPlayers()) {
         if (player.cards.length < 4) {
-            console.log('end on war');
             player.burnAllCards();
             this.gameOver(player);
             return;
@@ -294,17 +275,13 @@ Game.prototype.goToWar = function() {
         setTimeout(() => {
             animate(player.drew.domElement,`${player.name.toLowerCase().replace(' ','')}-war-card`, resultTime, () => {});
         }, moveTime);
-
     })
-
-
     this.previousRoundWinner = null;
-    
-    // $display.innerText = `War!`;
 }
 
 Game.prototype.gameOver = function(loser) {
-    // $display.innerText = `Game over. ${this.getPlayers().find(player => player !== loser).name} wins!`;
+    $display.innerText = `Game over. ${this.getPlayers().find(player => player !== loser).name} wins!`;
+    $draw.disabled = 'disabled';
     this.active = false;
 }
 
@@ -319,7 +296,5 @@ game.startGame.call(game);
 
 $draw.addEventListener('click', game.draw.bind(game));
 $playFull.addEventListener('click', game.playFullGame.bind(game));
-
-
 
 })();

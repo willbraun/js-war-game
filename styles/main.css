@@ -13,26 +13,34 @@ body {
 .title {
     text-align: center;
     grid-area: title;
-    margin-bottom: -15px;
+    margin-bottom: -40px;
     font-size: 1.2rem;
 }
 
 .game-container {
     display: grid;
     grid-template-columns: 0.5fr 1fr 1fr 1fr 0.5fr;
-    grid-template-rows: 0.05fr 1fr 0.1fr;
+    grid-template-rows: 0.07fr 0.03fr 1fr 0.1fr;
     grid-template-areas: 
         ". . title . ."
+        ". display display display ."
         "player1 game-table game-table game-table player2"
         ". . draw . playFullGame";
     margin: auto;
     height: 90vh;
     width: 90vw;
-    max-height: 650px;
+    max-height: 675px;
     max-width: 1200px;
     row-gap: 4%;
     column-gap: 3%;
     font-family: Georgia;
+}
+
+.display {
+    text-align: center;
+    grid-area: display;
+    font-size: 1rem;
+    margin-bottom: -10px;
 }
 
 .game-table {
@@ -49,13 +57,6 @@ body {
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 5px 10px 2px rgba(8, 8, 8, 0.2);
-}
-
-.display {
-    grid-area: display;
-    border: 1px solid;
-    text-align: center;
-    font-size: 3rem;
 }
 
 .player1 {
@@ -134,7 +135,6 @@ body {
     transform-style: preserve-3d;
     --x-distance: 0;
     --y-distance: 0;
-    /*animation: start-game 0.5s;*/
 }
 
 .card-inner {
@@ -165,6 +165,10 @@ img {
     height: 100%;
 }
 
+.create-deck {
+    animation: fade-in 0.5s;
+}
+
 .face-up .card-inner {
     transform: rotateX(180deg);
     box-shadow: 0 -5px 7px 2px rgba(8, 8, 8, 0.2);
@@ -186,6 +190,15 @@ img {
 .player2-war-card {
     animation: glow-red var(--war-effect-time), slide-left var(--war-effect-time);
     animation-iteration-count: 3;
+}
+
+@keyframes fade-in {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
 }
 
 @keyframes pop-out-yellow {
@@ -241,37 +254,3 @@ img {
         transform: translateX(0px);
     }
 }
-
-/* @keyframes shake {
-    0% { transform: rotate(0deg); }
-    25% { transform: rotate(5deg); box-shadow: 0 0px 20px 10px rgb(255, 64, 64);}
-    50% { transform: rotate(0deg); }
-    75% { transform: rotate(-5deg); box-shadow: 0 0px 20px 10px rgb(255, 64, 64);}
-    100% { transform: rotate(0deg); }
-} */
-
-/* @keyframes shake {
-    0% { transform: translate(1px, 1px) rotate(0deg); box-shadow: 0 0px 20px 10px rgb(255, 64, 64);}
-    10% { transform: translate(-1px, -2px) rotate(-1deg); box-shadow: 0 0px 20px 10px rgb(110, 2, 2);}
-    20% { transform: translate(-3px, 0px) rotate(1deg); box-shadow: 0 0px 20px 10px rgb(255, 64, 64)}
-    30% { transform: translate(3px, 2px) rotate(0deg); box-shadow: 0 0px 20px 10px rgb(110, 2, 2);}
-    40% { transform: translate(1px, -1px) rotate(1deg); box-shadow: 0 0px 20px 10px rgb(255, 64, 64)}
-    50% { transform: translate(-1px, 2px) rotate(-1deg); box-shadow: 0 0px 20px 10px rgb(110, 2, 2);}
-    60% { transform: translate(-3px, 1px) rotate(0deg); box-shadow: 0 0px 20px 10px rgb(255, 64, 64)}
-    70% { transform: translate(3px, 1px) rotate(-1deg); box-shadow: 0 0px 20px 10px rgb(110, 2, 2);}
-    80% { transform: translate(-1px, -1px) rotate(1deg); box-shadow: 0 0px 20px 10px rgb(255, 64, 64)}
-    90% { transform: translate(1px, 2px) rotate(0deg); box-shadow: 0 0px 20px 10px rgb(110, 2, 2);}
-    100% { transform: translate(1px, -2px) rotate(-1deg); box-shadow: 0 0px 20px 10px rgb(255, 64, 64)}
-} */
-
-/*@keyframes start-game {
-    0% {
-        transform: scale(0);
-    }
-    60% {
-        transform: scale(0);
-    }
-    100% {
-        transform: scale(1);
-    }
-  }*/
