@@ -56,6 +56,10 @@ function Game() {
     this.active = true;
 }
 
+Player.prototype.updateName = function(event) {
+    this.name = event.target.value;
+}
+
 Deck.prototype.shuffle = function() {
     this.cards.sort(() => Math.random() - 0.5);
 }
@@ -299,12 +303,7 @@ Game.prototype.playFullGame = function() {
 } 
 
 const game = new Game();
-// game.getNames();
 game.startGame.call(game);
-
-Player.prototype.updateName = function(event) {
-    this.name = event.target.value;
-}
 
 $draw.addEventListener('click', game.draw.bind(game));
 $playFull.addEventListener('click', game.playFullGame.bind(game));
