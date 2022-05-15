@@ -6,14 +6,12 @@ const $display = document.querySelector('.display');
 const $p1Name = document.querySelector('.player1-name-input');
 const $p2Name = document.querySelector('.player2-name-input');
 const $draw = document.querySelector('.draw');
-const $playFull = document.querySelector('.playFullGame');
 const $p1Card = document.querySelector('.p1Card');
 const $p2Card = document.querySelector('.p2Card');
 const $p1Deck = document.querySelector('.p1Deck');
 const $p2Deck = document.querySelector('.p2Deck');
 const $cardPot = document.querySelector('.cardPot');
 const $cardTemplate = document.querySelector('.card-template');
-
 
 const cardSeparation = 4;
 const moveTime = 600;
@@ -164,10 +162,6 @@ Game.prototype.startGame = function() {
     });
 };
 
-// Game.prototype.getNames = function() {
-//     this.getPlayers().forEach(player => player.name = prompt(`Enter name for player ${player.number}`));
-// }
-
 Card.prototype.flipUp = function() {
     this.domElement.classList.add('face-up');
 }
@@ -241,7 +235,7 @@ const disableButton = function() {
 }
 
 Game.prototype.draw = function() {
-    // disableButton();
+    disableButton();
 
     if (this.player1.drew) {
         this.clearForNextTurn();
@@ -293,20 +287,12 @@ Game.prototype.goToWar = function() {
 Game.prototype.gameOver = function(loser) {
     $display.innerText = `Game over. ${this.getPlayers().find(player => player !== loser).name} wins!`;
     $draw.disabled = 'disabled';
-    this.active = false;
 }
-
-Game.prototype.playFullGame = function() {
-    while (this.active) {
-        this.draw();
-    }
-} 
 
 const game = new Game();
 game.startGame.call(game);
 
 $draw.addEventListener('click', game.draw.bind(game));
-$playFull.addEventListener('click', game.playFullGame.bind(game));
 $p1Name.addEventListener('blur', game.player1.updateName.bind(game.player1));
 $p2Name.addEventListener('blur', game.player2.updateName.bind(game.player2));
 

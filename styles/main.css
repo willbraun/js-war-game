@@ -24,7 +24,7 @@ body {
         ". . title . ."
         ". display display display ."
         "player1 game-table game-table game-table player2"
-        ". . draw . playFullGame";
+        ". . draw . .";
     margin: auto;
     height: 80vh;
     width: 95vw;
