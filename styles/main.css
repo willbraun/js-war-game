@@ -19,7 +19,7 @@ body {
 
 .game-container {
     display: grid;
-    grid-template-columns: 0.5fr 1fr 1fr 1fr 0.5fr;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
     grid-template-rows: 0.07fr 0.03fr 1fr 0.1fr;
     grid-template-areas: 
         ". . title . ."
@@ -27,10 +27,9 @@ body {
         "player1 game-table game-table game-table player2"
         ". . draw . playFullGame";
     margin: auto;
-    height: 90vh;
+    height: 80vh;
     width: 90vw;
-    max-height: 675px;
-    max-width: 1200px;
+    max-height: 90vh;
     row-gap: 4%;
     column-gap: 3%;
     font-family: Georgia;
@@ -57,15 +56,29 @@ body {
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 5px 10px 2px rgba(8, 8, 8, 0.2);
+    min-height: 350px;
+    min-width: 700px;
 }
 
 .player1 {
     grid-area: player1;
+    background-color: red;
 }
 
 .player2 {
     grid-area: player2;
+    background-color: red;
 }
+
+input {
+    background-color: transparent;
+    height: 30px;
+    border: 0px;
+    font-size: 1rem;
+    float: right;
+}
+
+
 
 .p1Card {
     grid-area: p1Card;
