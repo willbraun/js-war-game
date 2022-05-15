@@ -1,7 +1,8 @@
 :root {
     --button-color: rgb(188, 89, 213);
     --button-shadow: rgb(103, 28, 121);
-    --card-effect-time: 1.2s;
+    --win-effect-time: 1.2s;
+    --war-effect-time: 0.4s;
 }
 
 body {
@@ -173,12 +174,18 @@ img {
     transform: translate(var(--x-distance), var(--y-distance));
 }
 
-.pop-out-card {
-    animation: pop-out-yellow var(--card-effect-time);
+.winner-card {
+    animation: pop-out-yellow var(--win-effect-time);
 }
 
-.shake-card {
-    animation: shake var(--card-effect-time);
+.player1-war-card {
+    animation: glow-red var(--war-effect-time), slide-right var(--war-effect-time);
+    animation-iteration-count: 3;
+}
+
+.player2-war-card {
+    animation: glow-red var(--war-effect-time), slide-left var(--war-effect-time);
+    animation-iteration-count: 3;
 }
 
 @keyframes pop-out-yellow {
@@ -198,7 +205,52 @@ img {
     }
 }
 
-@keyframes shake {
+@keyframes glow-red {
+    0% {
+        border-radius: 8px;
+    }
+    40% {
+        border-radius: 8px;
+        box-shadow: 0 0px 20px 10px rgb(238, 0, 0);
+    }
+    100% {
+        border-radius: 8px;
+    }
+}
+
+@keyframes slide-right {
+    0% {
+        transform: translateX(0px);
+    }
+    40% {
+        transform: translateX(20px);
+    }
+    100% {
+        transform: translateX(0px);
+    }
+}
+
+@keyframes slide-left {
+    0% {
+        transform: translateX(0px);
+    }
+    40% {
+        transform: translateX(-20px);
+    }
+    100% {
+        transform: translateX(0px);
+    }
+}
+
+/* @keyframes shake {
+    0% { transform: rotate(0deg); }
+    25% { transform: rotate(5deg); box-shadow: 0 0px 20px 10px rgb(255, 64, 64);}
+    50% { transform: rotate(0deg); }
+    75% { transform: rotate(-5deg); box-shadow: 0 0px 20px 10px rgb(255, 64, 64);}
+    100% { transform: rotate(0deg); }
+} */
+
+/* @keyframes shake {
     0% { transform: translate(1px, 1px) rotate(0deg); box-shadow: 0 0px 20px 10px rgb(255, 64, 64);}
     10% { transform: translate(-1px, -2px) rotate(-1deg); box-shadow: 0 0px 20px 10px rgb(110, 2, 2);}
     20% { transform: translate(-3px, 0px) rotate(1deg); box-shadow: 0 0px 20px 10px rgb(255, 64, 64)}
@@ -210,7 +262,7 @@ img {
     80% { transform: translate(-1px, -1px) rotate(1deg); box-shadow: 0 0px 20px 10px rgb(255, 64, 64)}
     90% { transform: translate(1px, 2px) rotate(0deg); box-shadow: 0 0px 20px 10px rgb(110, 2, 2);}
     100% { transform: translate(1px, -2px) rotate(-1deg); box-shadow: 0 0px 20px 10px rgb(255, 64, 64)}
-}
+} */
 
 /*@keyframes start-game {
     0% {

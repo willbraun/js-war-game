@@ -14,7 +14,7 @@ const $cardTemplate = document.querySelector('.card-template');
 
 const cardSeparation = 4;
 const moveTime = 600;
-const popOutTime = 1200;
+const resultTime = 1200;
 
 function Card({val, suit}) { 
     this.val = val;
@@ -242,7 +242,7 @@ Game.prototype.checkIfWar = function() {
 
 const disableButton = function() {
     $draw.disabled = 'disabled';
-    setTimeout(() => $draw.disabled = '', moveTime + popOutTime);
+    setTimeout(() => $draw.disabled = '', moveTime + resultTime);
 }
 
 Game.prototype.draw = function() {
@@ -271,7 +271,7 @@ Game.prototype.endRound = function(winner, loser) {
         return;
     }
 
-    setTimeout(() => {animate(winner.drew.domElement,'pop-out-card', popOutTime, () => {})}, moveTime);
+    setTimeout(() => {animate(winner.drew.domElement,'winner-card', resultTime, () => {})}, moveTime);
     this.previousRoundWinner = winner;
     // $display.innerText = ``;
 }
@@ -292,7 +292,7 @@ Game.prototype.goToWar = function() {
 
     this.getPlayers().forEach(player => {
         setTimeout(() => {
-            animate(player.drew.domElement,'shake-card', popOutTime, () => {});
+            animate(player.drew.domElement,`${player.name.toLowerCase().replace(' ','')}-war-card`, resultTime, () => {});
         }, moveTime);
 
     })
