@@ -3,6 +3,8 @@
 'use strict';
 
 const $display = document.querySelector('.display');
+const $p1Name = document.querySelector('.player1-name-input');
+const $p2Name = document.querySelector('.player2-name-input');
 const $draw = document.querySelector('.draw');
 const $playFull = document.querySelector('.playFullGame');
 const $p1Card = document.querySelector('.p1Card');
@@ -33,7 +35,8 @@ function Deck() {
         .push(new Card({val: num, suit: suit}))));
 }
 
-function Player({name, cards, cardLocation, deckLocation}) {
+function Player({number, name, cards, cardLocation, deckLocation}) {
+    this.number = number;
     this.name = name;
     this.cards = cards;
     this.cardLocation = cardLocation;
@@ -42,12 +45,12 @@ function Player({name, cards, cardLocation, deckLocation}) {
     this.drew = null;
 }
 
-function Game({player1Name, player2Name}) {
+function Game() {
     const gameDeck = new Deck();
     gameDeck.shuffle();
 
-    this.player1 = new Player({name: player1Name, cards: gameDeck.cards.slice(0,26), cardLocation: $p1Card, deckLocation: $p1Deck});
-    this.player2 = new Player({name: player2Name, cards: gameDeck.cards.slice(26,52), cardLocation: $p2Card, deckLocation: $p2Deck});
+    this.player1 = new Player({number: 1, name: null, cards: gameDeck.cards.slice(0,26), cardLocation: $p1Card, deckLocation: $p1Deck});
+    this.player2 = new Player({number: 2, name: null, cards: gameDeck.cards.slice(26,52), cardLocation: $p2Card, deckLocation: $p2Deck});
     this.cardPot = [];
     this.previousRoundWinner = null;
     this.active = true;
@@ -156,6 +159,10 @@ Game.prototype.startGame = function() {
         });
     });
 };
+
+// Game.prototype.getNames = function() {
+//     this.getPlayers().forEach(player => player.name = prompt(`Enter name for player ${player.number}`));
+// }
 
 Card.prototype.flipUp = function() {
     this.domElement.classList.add('face-up');
@@ -273,7 +280,7 @@ Game.prototype.goToWar = function() {
 
     this.getPlayers().forEach(player => {
         setTimeout(() => {
-            animate(player.drew.domElement,`${player.name.toLowerCase().replace(' ','')}-war-card`, resultTime, () => {});
+            animate(player.drew.domElement,`player${player.number}-war-card`, resultTime, () => {});
         }, moveTime);
     })
     this.previousRoundWinner = null;
@@ -291,10 +298,17 @@ Game.prototype.playFullGame = function() {
     }
 } 
 
-const game = new Game({player1Name: 'Player 1', player2Name: 'Player 2'});
+const game = new Game();
+// game.getNames();
 game.startGame.call(game);
+
+Player.prototype.updateName = function(event) {
+    this.name = event.target.value;
+}
 
 $draw.addEventListener('click', game.draw.bind(game));
 $playFull.addEventListener('click', game.playFullGame.bind(game));
+$p1Name.addEventListener('blur', game.player1.updateName.bind(game.player1));
+$p2Name.addEventListener('blur', game.player2.updateName.bind(game.player2));
 
 })();
