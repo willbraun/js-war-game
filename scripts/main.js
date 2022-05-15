@@ -3,7 +3,7 @@
 'use strict';
 
 const $draw = document.querySelector('.draw');
-const $display = document.querySelector('.display');
+// const $display = document.querySelector('.display');
 const $playFull = document.querySelector('.playFullGame');
 const $p1Card = document.querySelector('.p1Card');
 const $p2Card = document.querySelector('.p2Card');
@@ -11,7 +11,10 @@ const $p1Deck = document.querySelector('.p1Deck');
 const $p2Deck = document.querySelector('.p2Deck');
 const $cardPot = document.querySelector('.cardPot');
 const $cardTemplate = document.querySelector('.card-template');
+
 const cardSeparation = 4;
+const moveTime = 600;
+const popOutTime = 1200;
 
 function Card({val, suit}) { 
     this.val = val;
@@ -120,7 +123,7 @@ const animate = function(domElement, cssClass, animationTime, backgroundFunction
     domElement.classList.add(cssClass);
     setTimeout(() => {
         backgroundFunction();
-        domElement.classList.remove('move');
+        domElement.classList.remove(cssClass);
     }, animationTime);
 }
 
@@ -145,7 +148,7 @@ Card.prototype.moveToUI = function(destinationCardContainer,topOfDeck = false) {
     this.setCSSDistances(destinationCardContainer);
 
     shiftCardsUp(destinationCardContainer);
-    animate(this.domElement,'move', 600, () => {
+    animate(this.domElement,'move', moveTime, () => {
         if (topOfDeck) {
             destinationCardContainer.appendChild(this.domElement);
         }
@@ -232,12 +235,19 @@ Game.prototype.checkIfWar = function() {
     const p1 = this.player1;
     const p2 = this.player2;
 
-    if (p1.drew.val > p2.drew.val) this.endRound(p1, p2, p1.drew, p2.drew);
-    else if (p1.drew.val < p2.drew.val) this.endRound(p2, p1, p2.drew, p1.drew);
-    else if (p1.drew.val === p2.drew.val) this.goToWar(p1.drew,p2.drew);
+    if (p1.drew.val > p2.drew.val) this.endRound(p1, p2);
+    else if (p1.drew.val < p2.drew.val) this.endRound(p2, p1);
+    else if (p1.drew.val === p2.drew.val) this.goToWar();
+}
+
+const disableButton = function() {
+    $draw.disabled = 'disabled';
+    setTimeout(() => $draw.disabled = '', moveTime + popOutTime);
 }
 
 Game.prototype.draw = function() {
+    disableButton();
+    
     if (this.player1.drew) {
         this.clearForNextTurn();
     }   
@@ -254,21 +264,23 @@ Game.prototype.draw = function() {
     this.checkIfWar();
 }
 
-Game.prototype.endRound = function(winner, loser, winCard, loseCard) {
+Game.prototype.endRound = function(winner, loser) {
     if (loser.cards.length === 0) {
         console.log('end on no war');
         this.gameOver(loser);
         return;
     }
+
+    setTimeout(() => {animate(winner.drew.domElement,'pop-out-card', popOutTime, () => {})}, moveTime);
     this.previousRoundWinner = winner;
-    $display.innerText = ``;
+    // $display.innerText = ``;
 }
 
 Player.prototype.burnAllCards = function() {
     this.cards.forEach(() => this.burnCard());
 }
 
-Game.prototype.goToWar = function(card1,card2) {
+Game.prototype.goToWar = function() {
     for (let player of this.getPlayers()) {
         if (player.cards.length < 4) {
             console.log('end on war');
@@ -277,13 +289,22 @@ Game.prototype.goToWar = function(card1,card2) {
             return;
         }
     }
+
+    this.getPlayers().forEach(player => {
+        setTimeout(() => {
+            animate(player.drew.domElement,'shake-card', popOutTime, () => {});
+        }, moveTime);
+
+    })
+
+
     this.previousRoundWinner = null;
     
-    $display.innerText = `War!`;
+    // $display.innerText = `War!`;
 }
 
 Game.prototype.gameOver = function(loser) {
-    $display.innerText = `Game over. ${this.getPlayers().find(player => player !== loser).name} wins!`;
+    // $display.innerText = `Game over. ${this.getPlayers().find(player => player !== loser).name} wins!`;
     this.active = false;
 }
 
@@ -298,5 +319,7 @@ game.startGame.call(game);
 
 $draw.addEventListener('click', game.draw.bind(game));
 $playFull.addEventListener('click', game.playFullGame.bind(game));
+
+
 
 })();
