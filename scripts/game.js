@@ -1,94 +1,7 @@
-import { createCardDOMElement, stackCards, getDistanceX, getDistanceY, animate, shiftCardsUp, disableButton } from './helpers.js';
-import { $display, $draw, $p1Card, $p2Card, $p1Deck, $p2Deck, $cardPot, moveTime, resultTime } from './main.js';
-
-export function Card({val, suit}) { 
-    this.val = val;
-    this.suit = suit;
-    this.domElement = null;
-}
-
-Card.prototype.setCSSDistances = function(endPositionElement) {
-    this.domElement.style.setProperty('--x-distance',`${getDistanceX(this.domElement,endPositionElement)}px`);
-    this.domElement.style.setProperty('--y-distance',`${getDistanceY(this.domElement,endPositionElement)}px`);
-}
-
-Card.prototype.moveToUI = function(destinationCardContainer,topOfDeck = false) {
-    this.flipDown();
-    this.setCSSDistances(destinationCardContainer);
-
-    shiftCardsUp(destinationCardContainer);
-    animate(this.domElement,'move', moveTime, () => {
-        if (topOfDeck) {
-            destinationCardContainer.appendChild(this.domElement);
-        }
-        else {
-            destinationCardContainer.prepend(this.domElement);
-        }
-        
-        stackCards(destinationCardContainer);
-    });
-}
-
-Card.prototype.moveToArray = function(destinationArray) {
-    destinationArray.unshift(this);
-}
-
-Card.prototype.flipUp = function() {
-    this.domElement.classList.add('face-up');
-}
-
-Card.prototype.flipDown = function() {
-    this.domElement.classList.remove('face-up');
-}
-
-export function Deck() {
-    this.cards = [];
-    const numbers = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
-    const suits = ['clubs','diamonds','hearts','spades'];
-
-    suits.forEach(suit => numbers
-        .forEach(num => this.cards
-        .push(new Card({val: num, suit: suit}))));
-}
-
-Deck.prototype.shuffle = function() {
-    this.cards.sort(() => Math.random() - 0.5);
-}
-
-export function Player({number, name, cards, cardLocation, deckLocation}) {
-    this.number = number;
-    this.name = name;
-    this.cards = cards;
-    this.cardLocation = cardLocation;
-    this.deckLocation = deckLocation;
-    this.burnLocation = $cardPot;
-    this.drew = null;
-}
-
-Player.prototype.updateName = function(event) {
-    this.name = event.target.value;
-}
-
-Player.prototype.drawCard = function() {
-    return this.cards.pop();
-}
-
-Player.prototype.playCard = function() {
-    const playedCard = this.drawCard();
-    playedCard.moveToUI(this.cardLocation);
-    playedCard.flipUp();
-    return playedCard;
-}
-
-Player.prototype.burnCard = function() {
-    const burnedCard = this.drawCard();
-    burnedCard.moveToUI(this.burnLocation);
-    return burnedCard;
-}
-
-Player.prototype.burnAllCards = function() {
-    this.cards.forEach(() => this.burnCard());
-}
+import { $display, $draw, $p1Card, $p2Card, $p1Deck, $p2Deck, $cardPot, startTime, moveTime, resultTime, warTime } from './main.js';
+import { Player } from './player.js';
+import { Deck } from './deck.js';
+import { createCardDOMElement, animate, disableButton } from './helpers.js';
 
 export function Game() {
     const gameDeck = new Deck();
@@ -106,7 +19,7 @@ Game.prototype.startGame = function() {
         player.cards.forEach(card => {
             createCardDOMElement(card);
             card.moveToUI(player.deckLocation, true);
-            animate(card.domElement,'create-deck', 3000, () => {});
+            animate(card.domElement,'create-deck', startTime, () => {});
         });
     });
 };
@@ -193,7 +106,7 @@ Game.prototype.goToWar = function() {
 
     this.getPlayers().forEach(player => {
         setTimeout(() => {
-            animate(player.drew.domElement,`player${player.number}-war-card`, resultTime, () => {});
+            animate(player.drew.domElement,`player${player.number}-war-card`, warTime, () => {});
         }, moveTime);
     })
     this.previousRoundWinner = null;
