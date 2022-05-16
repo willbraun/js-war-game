@@ -18,7 +18,7 @@ body {
 
 .game-container {
     display: grid;
-    grid-template-columns: 1.2fr 1fr 1fr 1fr 1.2fr;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
     grid-template-rows: 0.07fr 0.03fr 1fr 0.1fr;
     grid-template-areas: 
         ". . title . ."
@@ -26,7 +26,7 @@ body {
         "player1 game-table game-table game-table player2"
         ". . draw . .";
     margin: auto;
-    height: 80vh;
+    height: 83vh;
     width: 95vw;
     row-gap: 4%;
     column-gap: 3%;
@@ -70,11 +70,10 @@ input {
     margin: auto;
     height: 30px;
     border: 0px;
-    font-size: 1.2rem;
+    font-size: 1rem;
     font-weight: bold;
     width: 100%;
-    height: 5vh;
-    min-height: 30px;
+    height: 40px;
     border-radius: 10px;
     box-shadow: inset 0 3px 10px 2px rgba(8, 8, 8, 0.2);
 }
