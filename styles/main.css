@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Volkhov:wght@700&display=swap');
+
 :root {
     --button-color: rgb(188, 89, 213);
     --button-shadow: rgb(103, 28, 121);
@@ -7,13 +9,15 @@
 
 body {
     background: linear-gradient(90deg, rgb(203, 203, 203) 0%, rgba(255,255,255,1) 50%, rgb(203, 203, 203) 100%);
+    font-family: 'Volkhov', 'sans serif';
 }
 
 .title {
     text-align: center;
     grid-area: title;
+    margin-top: -30px;
     margin-bottom: -40px;
-    font-size: 1.2rem;
+    font-size: 1.8rem;
 }
 
 .game-container {
@@ -21,23 +25,22 @@ body {
     grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
     grid-template-rows: 0.07fr 0.03fr 1fr 0.1fr;
     grid-template-areas: 
-        ". . title . ."
+        ". title title title ."
         ". display display display ."
         "player1 game-table game-table game-table player2"
         ". . draw . .";
     margin: auto;
-    height: 83vh;
+    height: 90vh;
     width: 95vw;
     row-gap: 4%;
-    column-gap: 3%;
-    font-family: Georgia;
+    column-gap: 3%; 
 }
 
 .display {
     text-align: center;
     grid-area: display;
-    font-size: 1rem;
-    margin-bottom: -10px;
+    font-size: 2rem;
+    margin: -10px;
 }
 
 .game-table {
@@ -45,7 +48,7 @@ body {
     grid-template-rows: 1fr 1fr;
     grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
     grid-template-areas:         
-        "player1-score p1Card . p2Card player2-score"
+        ". p1Card . p2Card ."
         "p1Deck . cardPot . p2Deck";
     row-gap: 20px;
     column-gap: 20px;
@@ -76,11 +79,6 @@ input {
     height: 40px;
     border-radius: 10px;
     box-shadow: inset 0 3px 10px 2px rgba(8, 8, 8, 0.2);
-}
-
-.player1 .score, .player2 .score {
-    font-size: 4rem;
-    font-family: Helvetica;
 }
 
 ::placeholder {

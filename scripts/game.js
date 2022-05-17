@@ -1,4 +1,4 @@
-import { $display, $draw, $p1Card, $p2Card, $p1Deck, $p2Deck, $cardPot, startTime, moveTime, resultTime, warTime } from './main.js';
+import { $display, $draw, $p1Score, $p2Score, $p1Card, $p2Card, $p1Deck, $p2Deck, $cardPot, startTime, moveTime, resultTime, warTime } from './main.js';
 import { Player } from './player.js';
 import { Deck } from './deck.js';
 import { createCardDOMElement, animate, disableButton } from './helpers.js';
@@ -7,8 +7,8 @@ export function Game() {
     const gameDeck = new Deck();
     gameDeck.shuffle();
 
-    this.player1 = new Player({number: 1, name: 'Player 1', cards: gameDeck.cards.slice(0,26), cardLocation: $p1Card, deckLocation: $p1Deck});
-    this.player2 = new Player({number: 2, name: 'Player 2', cards: gameDeck.cards.slice(26,52), cardLocation: $p2Card, deckLocation: $p2Deck});
+    this.player1 = new Player({number: 1, name: 'Player 1', cards: gameDeck.cards.slice(0,26), cardLocation: $p1Card, deckLocation: $p1Deck, scoreElement: $p1Score});
+    this.player2 = new Player({number: 2, name: 'Player 2', cards: gameDeck.cards.slice(26,52), cardLocation: $p2Card, deckLocation: $p2Deck, scoreElement: $p2Score});
     this.cardPot = [];
     this.previousRoundWinner = null;
     this.active = true;
@@ -26,6 +26,11 @@ Game.prototype.startGame = function() {
 
 Game.prototype.getPlayers = function() {
     return Object.entries(this).filter(entry => entry[0].includes('player')).map(entry => entry[1]);
+}
+
+Game.prototype.updateScores = function() {
+    $display.innerText = `${this.player1.cards.length} - ${this.player2.cards.length}`;
+    //this.getPlayers().forEach(player => player.scoreElement.textContent = player.cards.length);
 }
 
 Game.prototype.moveTableCardsToWinner = function() {
@@ -55,6 +60,7 @@ Game.prototype.clearForNextTurn = function() {
         this.moveTableCardsToPot();
         this.getPlayers().forEach(player => Array(3).fill().forEach(() => this.cardPot.push(player.burnCard())));
     }
+    this.updateScores();
 }
 
 Game.prototype.checkIfWar = function() {

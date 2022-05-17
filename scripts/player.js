@@ -1,12 +1,13 @@
 import { $cardPot } from './main.js';
 
-export function Player({number, name, cards, cardLocation, deckLocation}) {
+export function Player({number, name, cards, cardLocation, deckLocation, scoreElement}) {
     this.number = number;
     this.name = name;
     this.cards = cards;
     this.cardLocation = cardLocation;
     this.deckLocation = deckLocation;
     this.burnLocation = $cardPot;
+    this.scoreElement = scoreElement;
     this.drew = null;
 }
 
@@ -33,4 +34,8 @@ Player.prototype.burnCard = function() {
 
 Player.prototype.burnAllCards = function() {
     this.cards.forEach(() => this.burnCard());
+}
+
+Player.prototype.updateScore = function() {
+    this.scoreElement.innerText = this.cards.length;
 }
