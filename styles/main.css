@@ -45,7 +45,7 @@ body {
     grid-template-rows: 1fr 1fr;
     grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
     grid-template-areas:         
-        ". p1Card . p2Card ."
+        "player1-score p1Card . p2Card player2-score"
         "p1Deck . cardPot . p2Deck";
     row-gap: 20px;
     column-gap: 20px;
@@ -76,6 +76,11 @@ input {
     height: 40px;
     border-radius: 10px;
     box-shadow: inset 0 3px 10px 2px rgba(8, 8, 8, 0.2);
+}
+
+.player1 .score, .player2 .score {
+    font-size: 4rem;
+    font-family: Helvetica;
 }
 
 ::placeholder {

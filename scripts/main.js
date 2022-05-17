@@ -3,6 +3,8 @@ import { Game } from './game.js';
 export const $display = document.querySelector('.display');
 export const $p1Name = document.querySelector('.player1-name-input');
 export const $p2Name = document.querySelector('.player2-name-input');
+export const $p1Score = document.querySelector('.player1 .score');
+export const $p2Score = document.querySelector('.player2 .score');
 export const $draw = document.querySelector('.draw');
 export const $p1Card = document.querySelector('.p1Card');
 export const $p2Card = document.querySelector('.p2Card');
