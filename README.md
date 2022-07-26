@@ -1,6 +1,6 @@
 # Overview
 
-This is a browser app that allows you to play the card game war. 
+This is a browser app that allows you to play the card game War. 
 
 # Description
 
