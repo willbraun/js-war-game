@@ -30,8 +30,9 @@ body {
         "player1 game-table game-table game-table player2"
         ". . draw . .";
     margin: auto;
-    height: 90vh;
-    width: 95vw;
+    min-height: 40rem;
+    min-width: 80rem;
+    width: 80rem;
     row-gap: 4%;
     column-gap: 3%; 
 }
